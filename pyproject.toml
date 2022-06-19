@@ -28,7 +28,7 @@ profile = 'black'
 [tool.poetry]
 authors = ["clementjumel <clement.jumel@gmail.com>"]
 description = "Generic Python package template"
-name = "plathon"
+name = "pyccounting"
 version = "0.1.0"
 
 [tool.poetry.dependencies]

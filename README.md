@@ -1,3 +1,3 @@
-## Plathon
+## Pyccounting
 
-Plathon is a generic Python package template.
+Account Analysis Tools made with Python.
