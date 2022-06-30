@@ -3,4 +3,10 @@ import streamlit as st
 
 from pyccounting.database import engine
 
-st.dataframe(pd.read_sql(sql="operation", con=engine).set_index("id_"))
+df = pd.read_sql(sql="operation", con=engine)
+df = df[["date", "account", "amount", "label", "type_"]]
+df = df.sort_values(by="date", ascending=False)
+df["date"] = df["date"].apply(lambda x: x.date())
+df = df.set_index("date")
+
+st.dataframe(df)
