@@ -7,13 +7,11 @@ def plot_account(
     ax,
     account: str,
     start_amount: float,
-    df_account: pd.DataFrame,
+    series_account: pd.Series,
     min_date: datetime.date,
     max_date: datetime.date,
 ) -> None:
     total_amount: float = start_amount
-    series_account: pd.Series = df_account.set_index("date")["amount"]
-
     x, y = [min_date], [start_amount]
     for date, operation_amount in series_account.items():
         total_amount += operation_amount

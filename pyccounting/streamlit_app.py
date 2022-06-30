@@ -4,17 +4,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
-from pyccounting.database import engine
+from pyccounting.database import get_operation_df
 from pyccounting.plot import plot_account
 
 st.write("Welcome in Pyccounting.")
 
-df = pd.read_sql(sql="operation", con=engine)
-df = df[["date", "account", "amount"]]
-df = df.sort_values(by="date")
-df["date"] = df["date"].apply(lambda x: x.date())
+df: pd.DataFrame = get_operation_df()
+df = df[["account", "amount"]]
 
-dates = df["date"].values
+dates = df.index.values
 min_date, max_date = min(dates), max(dates)
 
 accounts: list[str] = sorted(set(df["account"].values))
@@ -30,7 +28,7 @@ for account in display_accounts:
         ax=ax,
         account=account,
         start_amount=start_amounts[account]["amount"],
-        df_account=df.loc[df["account"] == account],
+        series_account=df.loc[df["account"] == account]["amount"],
         min_date=min_date,
         max_date=max_date,
     )
@@ -39,7 +37,7 @@ if display_total:
         ax=ax,
         account="total",
         start_amount=sum(start_amounts[account]["amount"] for account in accounts),
-        df_account=df,
+        series_account=df["amount"],
         min_date=min_date,
         max_date=max_date,
     )
