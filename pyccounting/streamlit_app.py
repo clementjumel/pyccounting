@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
-from pyccounting.database import get_operation_df
+from pyccounting.database import TimeSpan, get_operation_df, reset_widget, time_span_widget
 from pyccounting.plot import plot_account
+
+time_span: TimeSpan = time_span_widget()
 
 st.write("Welcome in Pyccounting.")
 
@@ -48,3 +50,5 @@ ax.set_yticklabels([])
 plt.xlim(min_date, max_date)
 plt.legend()
 st.pyplot(fig=fig)
+
+reset_widget()

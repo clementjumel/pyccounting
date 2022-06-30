@@ -1,11 +1,13 @@
-from datetime import datetime
+import datetime
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting.database import Operation, engine
+from pyccounting.database import Operation, engine, reset_widget, time_span_widget
+
+time_span_widget()
 
 account = st.selectbox("Account", ("bnp", "fortuneo"))
 uploaded_file = st.file_uploader(label="Upload a file", type=["csv", "xls"])
@@ -26,7 +28,7 @@ if uploaded_file is not None:
                     account=account,
                     type_=row["Type operation"],
                     label=row["Libelle operation"],
-                    date=datetime.strptime(row["Date operation"], "%d/%m/%Y").date(),
+                    date=datetime.datetime.strptime(row["Date operation"], "%d/%m/%Y").date(),
                     amount=float(row["Montant operation en euro"].replace(",", ".")),
                 )
 
@@ -42,9 +44,11 @@ if uploaded_file is not None:
                     account=account,
                     type_="unknown",
                     label=row["libellé"],
-                    date=datetime.strptime(row["Date opération"], "%d/%m/%Y").date(),
+                    date=datetime.datetime.strptime(row["Date opération"], "%d/%m/%Y").date(),
                     amount=float(row[amount_column].replace(",", ".")),
                 )
 
             session.add(operation)
         session.commit()
+
+reset_widget()

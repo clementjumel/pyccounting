@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Literal
 
 import pandas as pd
 import streamlit as st
@@ -31,7 +32,24 @@ with Session(engine) as session:
     Base.metadata.create_all(bind=session.bind)
 
 
-@st.cache()
+def reset_widget() -> None:
+    if os.getenv("RESET_BUTTON") == "1":
+        with st.sidebar:
+            if st.button("Reset"):
+                with Session(engine) as session:
+                    Base.metadata.drop_all(bind=session.bind)
+                    Base.metadata.create_all(bind=session.bind)
+
+
+TimeSpan = Literal["All", "Last year", "Last month", "Last week"]
+TIME_SPAN_VALUES = TimeSpan.__args__  # type: ignore
+
+
+def time_span_widget() -> TimeSpan:
+    with st.sidebar:
+        return st.radio("Select a time span", TIME_SPAN_VALUES)
+
+
 def get_operation_df() -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
     df["date"] = df["date"].apply(lambda x: x.date())
