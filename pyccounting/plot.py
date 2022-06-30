@@ -10,6 +10,7 @@ def plot_account(
     account: str,
     initial_date: datetime.date,
     final_date: datetime.date,
+    anonymous_mode: bool,
 ) -> None:
     df_account = df.loc[df["account"] == account]
     initial_amount: float = df_account.iloc[0]["initial_amount"]
@@ -22,18 +23,19 @@ def plot_account(
     x.append(final_date)
     y.append(final_amount)
 
-    ax.annotate(
-        text=round(initial_amount, 2),
-        xy=(initial_date, initial_amount),
-        xytext=(-50, 0),
-        textcoords="offset points",
-    )
-    ax.annotate(
-        text=round(final_amount, 2),
-        xy=(final_date, final_amount),
-        xytext=(5, 0),
-        textcoords="offset points",
-    )
+    if not anonymous_mode:
+        ax.annotate(
+            text=round(initial_amount, 2),
+            xy=(initial_date, initial_amount),
+            xytext=(-50, 0),
+            textcoords="offset points",
+        )
+        ax.annotate(
+            text=round(final_amount, 2),
+            xy=(final_date, final_amount),
+            xytext=(5, 0),
+            textcoords="offset points",
+        )
     ax.plot(x, y, label=account)
 
 
@@ -41,6 +43,7 @@ def plot_total(
     ax: plt.Axes,
     df: pd.DataFrame,
     accounts: list[str],
+    anonymous_mode: bool,
 ) -> None:
     initial_date: datetime.date = df.index[0]
     final_date: datetime.date = df.index[-1]
@@ -58,16 +61,17 @@ def plot_total(
         y.append(amount)
     final_amount = y[-1]
 
-    ax.annotate(
-        text=round(initial_amount, 2),
-        xy=(initial_date, initial_amount),
-        xytext=(-50, 0),
-        textcoords="offset points",
-    )
-    ax.annotate(
-        text=round(final_amount, 2),
-        xy=(final_date, final_amount),
-        xytext=(5, 0),
-        textcoords="offset points",
-    )
+    if not anonymous_mode:
+        ax.annotate(
+            text=round(initial_amount, 2),
+            xy=(initial_date, initial_amount),
+            xytext=(-50, 0),
+            textcoords="offset points",
+        )
+        ax.annotate(
+            text=round(final_amount, 2),
+            xy=(final_date, final_amount),
+            xytext=(5, 0),
+            textcoords="offset points",
+        )
     ax.plot(x, y, label="total")

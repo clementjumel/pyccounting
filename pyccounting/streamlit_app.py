@@ -2,9 +2,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
-from pyccounting.database import TimeSpan, get_operation_df, reset_widget, time_span_widget
+from pyccounting.database import (
+    TimeSpan,
+    anonymous_mode_widget,
+    get_operation_df,
+    reset_widget,
+    time_span_widget,
+)
 from pyccounting.plot import plot_account, plot_total
 
+anonymous_mode: bool = anonymous_mode_widget()
 time_span: TimeSpan = time_span_widget()
 
 st.write("Welcome in Pyccounting.")
@@ -29,6 +36,7 @@ else:
             account=account,
             initial_date=initial_date,
             final_date=final_date,
+            anonymous_mode=anonymous_mode,
         )
 
     if display_total:
@@ -36,9 +44,11 @@ else:
             ax=ax,
             df=df,
             accounts=accounts,
+            anonymous_mode=anonymous_mode,
         )
 
-    ax.axhline(y=0, color="k")
+    if not anonymous_mode:
+        ax.axhline(y=0, color="k")
     ax.grid(True, which="both")
     ax.set_yticklabels([])
     plt.xlim(initial_date, final_date)
