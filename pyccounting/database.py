@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import os
 from typing import Literal
 
@@ -20,11 +21,13 @@ class Operation(Base):  # type: ignore
     __tablename__ = "operation"
 
     id_ = Column(Integer, primary_key=True, index=True)
-    account = Column(String)
+    account = Column(String, primary_key=True, index=True)
     type_ = Column(String)
     label = Column(String)
     date = Column(Date)
-    amount = Column(Float)
+    initial_amount = Column(Float)
+    operation_amount = Column(Float)
+    final_amount = Column(Float)
 
 
 os.makedirs("data/db/", exist_ok=True)
@@ -50,9 +53,26 @@ def time_span_widget() -> TimeSpan:
         return st.radio("Select a time span", TIME_SPAN_VALUES)
 
 
-def get_operation_df() -> pd.DataFrame:
+def get_operation_df(time_span: TimeSpan = TIME_SPAN_VALUES[0]) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
+
     df["date"] = df["date"].apply(lambda x: x.date())
     df = df.sort_values(by="date")
     df = df.set_index("date")
+
+    if time_span == "All":
+        pass
+    else:
+        if time_span == "Last year":
+            days = 365
+        elif time_span == "Last month":
+            days = 31
+        elif time_span == "Last week":
+            days = 7
+        else:
+            raise ValueError
+        min_datetime = datetime.datetime.now() - datetime.timedelta(days=days)
+        min_date = min_datetime.date()
+        df = df.loc[min_date:]  # type: ignore
+
     return df

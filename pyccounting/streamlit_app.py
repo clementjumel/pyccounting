@@ -1,54 +1,48 @@
-import json
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
 from pyccounting.database import TimeSpan, get_operation_df, reset_widget, time_span_widget
-from pyccounting.plot import plot_account
+from pyccounting.plot import plot_account, plot_total
 
 time_span: TimeSpan = time_span_widget()
 
 st.write("Welcome in Pyccounting.")
 
-df: pd.DataFrame = get_operation_df()
-df = df[["account", "amount"]]
+df: pd.DataFrame = get_operation_df(time_span=time_span)
 
-dates = df.index.values
-min_date, max_date = min(dates), max(dates)
+if df.empty:
+    st.write("There's nothing to see, here! ;)")
+else:
+    dates = df.index.values
+    initial_date, final_date = min(dates), max(dates)
 
-accounts: list[str] = sorted(set(df["account"].values))
-display_accounts = [account for account in accounts if st.checkbox(account, value=True)]
-display_total = st.checkbox("total", value=True)
+    accounts: list[str] = sorted(set(df["account"].values))
+    display_accounts = [account for account in accounts if st.checkbox(account, value=True)]
+    display_total = st.checkbox("total", value=True)
 
-with open("data/start.json") as file:
-    start_amounts = json.load(file)
+    fig, ax = plt.subplots()
+    for account in display_accounts:
+        plot_account(
+            ax=ax,
+            df=df,
+            account=account,
+            initial_date=initial_date,
+            final_date=final_date,
+        )
 
-fig, ax = plt.subplots()
-for account in display_accounts:
-    plot_account(
-        ax=ax,
-        account=account,
-        start_amount=start_amounts[account]["amount"],
-        series_account=df.loc[df["account"] == account]["amount"],
-        min_date=min_date,
-        max_date=max_date,
-    )
-if display_total:
-    plot_account(
-        ax=ax,
-        account="total",
-        start_amount=sum(start_amounts[account]["amount"] for account in accounts),
-        series_account=df["amount"],
-        min_date=min_date,
-        max_date=max_date,
-    )
+    if display_total:
+        plot_total(
+            ax=ax,
+            df=df,
+            accounts=accounts,
+        )
 
-ax.axhline(y=0, color="k")
-ax.grid(True, which="both")
-ax.set_yticklabels([])
-plt.xlim(min_date, max_date)
-plt.legend()
-st.pyplot(fig=fig)
+    ax.axhline(y=0, color="k")
+    ax.grid(True, which="both")
+    ax.set_yticklabels([])
+    plt.xlim(initial_date, final_date)
+    plt.legend()
+    st.pyplot(fig=fig)
 
 reset_widget()
