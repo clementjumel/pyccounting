@@ -33,6 +33,7 @@ version = "0.1.0"
 
 [tool.poetry.dependencies]
 matplotlib = "^3.5.2"
+numpy = "^1.23.0"
 pandas = "^1.4.2"
 python = "~3.10"
 python-dotenv = "^0.20.0"
