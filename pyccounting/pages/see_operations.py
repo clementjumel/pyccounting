@@ -17,6 +17,8 @@ if anonymous_mode:
     columns = ["account", "label", "type_"]
 else:
     columns = ["initial_amount", "operation_amount", "final_amount", "account", "label", "type_"]
+    for column in ["initial_amount", "operation_amount", "final_amount"]:
+        df[column] = df[column].apply(lambda x: str(round(x, 2)))
 df = df[columns]
 st.dataframe(df)
 
