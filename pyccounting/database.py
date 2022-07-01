@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import datetime
 import os
-from typing import Literal
 
 import pandas as pd
-import streamlit as st
 from dotenv import load_dotenv
 from sqlalchemy import Column, Date, Float, Integer, String, create_engine
 from sqlalchemy.engine import Engine
@@ -35,50 +33,7 @@ with Session(engine) as session:
     Base.metadata.create_all(bind=session.bind)
 
 
-def anonymous_mode_widget() -> bool:
-    if os.getenv("ANONYMOUS_MODE") == "1":
-        with st.sidebar:
-            anonymous_mode = st.checkbox("Anonymous mode", value=True)
-            st.write("---")
-            return anonymous_mode
-
-    return False
-
-
-def reset_widget() -> None:
-    if os.getenv("RESET_BUTTON") == "1":
-        with st.sidebar:
-            reset = st.button("Reset")
-            st.write("---")
-            if reset:
-                with Session(engine) as session:
-                    Base.metadata.drop_all(bind=session.bind)
-                    Base.metadata.create_all(bind=session.bind)
-
-
-def accounts_widget() -> list[str]:
-    with st.sidebar:
-        df = pd.read_sql(sql="operation", con=engine)
-        all_accounts = sorted(set(df["account"].values)) + ["total"]
-
-        st.write("Select your account(s):")
-        accounts = [account for account in all_accounts if st.checkbox(account, value=True)]
-        st.write("---")
-        return accounts
-
-
-TimeSpan = Literal["All", "Last year", "Last quarter", "Last month", "Last week"]
-TIME_SPAN_VALUES = TimeSpan.__args__  # type: ignore
-
-
-def time_span_widget() -> TimeSpan:
-    with st.sidebar:
-        time_span = st.radio("Select a time span", TIME_SPAN_VALUES)
-        st.write("---")
-        return time_span
-
-
-def get_operation_df(time_span: TimeSpan = TIME_SPAN_VALUES[0]) -> pd.DataFrame:
+def get_operation_df(time_span: str = "All") -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
 
     df["date"] = df["date"].apply(lambda x: x.date())

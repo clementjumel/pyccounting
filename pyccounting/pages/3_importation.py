@@ -6,7 +6,8 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting.database import Operation, engine, get_operation_df, reset_widget
+from pyccounting.database import Operation, engine, get_operation_df
+from pyccounting.widgets import reset_widget
 
 account = st.selectbox("Account", ("bnp", "fortuneo"))
 uploaded_file = st.file_uploader(label="Upload a file", type=["csv", "xls"])
