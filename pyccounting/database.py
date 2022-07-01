@@ -67,7 +67,7 @@ def accounts_widget() -> list[str]:
         return accounts
 
 
-TimeSpan = Literal["All", "Last year", "Last month", "Last week"]
+TimeSpan = Literal["All", "Last year", "Last quarter", "Last month", "Last week"]
 TIME_SPAN_VALUES = TimeSpan.__args__  # type: ignore
 
 
@@ -90,6 +90,8 @@ def get_operation_df(time_span: TimeSpan = TIME_SPAN_VALUES[0]) -> pd.DataFrame:
     else:
         if time_span == "Last year":
             days = 365
+        elif time_span == "Last quarter":
+            days = 93
         elif time_span == "Last month":
             days = 31
         elif time_span == "Last week":

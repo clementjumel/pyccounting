@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -11,7 +9,9 @@ from pyccounting.database import (
     reset_widget,
     time_span_widget,
 )
-from pyccounting.plot import plot_account, plot_total
+from pyccounting.plot import plot
+from pyccounting.statistics import statistics
+from pyccounting.table import table
 
 anonymous_mode: bool = anonymous_mode_widget()
 accounts: list[str] = accounts_widget()
@@ -27,52 +27,10 @@ if df.empty:
     st.write("There's nothing to see, here! ;)")
 
 else:
-    dates = df.index.values
-    initial_date, final_date = min(dates), max(dates)
+    plot(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    st.write("---")
 
-    fig, ax = plt.subplots()
-    for account in accounts:
-        if account != "total":
-            plot_account(
-                ax=ax,
-                df=df,
-                account=account,
-                initial_date=initial_date,
-                final_date=final_date,
-                anonymous_mode=anonymous_mode,
-            )
-        else:
-            plot_total(
-                ax=ax,
-                df=df,
-                accounts=accounts,
-                anonymous_mode=anonymous_mode,
-            )
+    statistics(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    st.write("---")
 
-    if not anonymous_mode:
-        ax.axhline(y=0, color="k")
-    ax.grid(True, which="both")
-    ax.set_yticklabels([])
-    plt.xlim(initial_date, final_date)
-    plt.legend()
-    st.pyplot(fig=fig)
-
-    st.write("")
-
-    columns = ["account", "label", "type_"]
-    if not anonymous_mode:
-        columns.extend(["initial_amount", "operation_amount", "final_amount"])
-    st.dataframe(df[columns])
-
-    st.write("")
-
-    statistics = [
-        ("Minimum operation amount", min(df["operation_amount"])),
-        ("Maximum operation amount", max(df["operation_amount"])),
-        ("Average operation amount", round(float(np.mean(df["operation_amount"])), 2)),
-        ("Total operation amount", round(sum(df["operation_amount"]), 2)),
-    ]
-
-    for name, result in statistics:
-        text = f"{name}: XXX" if anonymous_mode else f"{name}: {result}"
-        st.write(text)
+    table(df=df, accounts=accounts, anonymous_mode=anonymous_mode)

@@ -2,17 +2,13 @@ import datetime
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import streamlit as st
 
 
-def plot_account(
-    ax: plt.Axes,
-    df: pd.DataFrame,
-    account: str,
-    initial_date: datetime.date,
-    final_date: datetime.date,
-    anonymous_mode: bool,
-) -> None:
+def _plot_account(ax: plt.Axes, df: pd.DataFrame, account: str, anonymous_mode: bool) -> None:
     df_account = df.loc[df["account"] == account]
+    initial_date: datetime.date = min(df.index.values)
+    final_date: datetime.date = max(df.index.values)
     initial_amount: float = df_account.iloc[0]["initial_amount"]
     final_amount: float = df_account.iloc[-1]["final_amount"]
 
@@ -39,12 +35,7 @@ def plot_account(
     ax.plot(x, y, label=account)
 
 
-def plot_total(
-    ax: plt.Axes,
-    df: pd.DataFrame,
-    accounts: list[str],
-    anonymous_mode: bool,
-) -> None:
+def _plot_total(ax: plt.Axes, df: pd.DataFrame, accounts: list[str], anonymous_mode: bool) -> None:
     initial_date: datetime.date = df.index[0]
     final_date: datetime.date = df.index[-1]
 
@@ -76,3 +67,20 @@ def plot_total(
             textcoords="offset points",
         )
     ax.plot(x, y, label="total")
+
+
+def plot(df: pd.DataFrame, accounts: list[str], anonymous_mode: bool) -> None:
+    fig, ax = plt.subplots()
+    for account in accounts:
+        if account != "total":
+            _plot_account(ax=ax, df=df, account=account, anonymous_mode=anonymous_mode)
+        else:
+            _plot_total(ax=ax, df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+
+    if not anonymous_mode:
+        ax.axhline(y=0, color="k")
+    ax.grid(True, which="both")
+    ax.set_yticklabels([])
+    plt.xlim(min(df.index.values), max(df.index.values))
+    plt.legend()
+    st.pyplot(fig=fig)
