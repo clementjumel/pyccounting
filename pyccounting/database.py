@@ -36,15 +36,21 @@ with Session(engine) as session:
 
 
 def anonymous_mode_widget() -> bool:
-    with st.sidebar:
-        return st.checkbox("Anonymous mode", value=True)
+    if os.getenv("ANONYMOUS_MODE") == "1":
+        with st.sidebar:
+            anonymous_mode = st.checkbox("Anonymous mode", value=True)
+            st.write("---")
+            return anonymous_mode
+
+    return False
 
 
 def reset_widget() -> None:
     if os.getenv("RESET_BUTTON") == "1":
         with st.sidebar:
+            reset = st.button("Reset")
             st.write("---")
-            if st.button("Reset"):
+            if reset:
                 with Session(engine) as session:
                     Base.metadata.drop_all(bind=session.bind)
                     Base.metadata.create_all(bind=session.bind)
@@ -56,8 +62,9 @@ TIME_SPAN_VALUES = TimeSpan.__args__  # type: ignore
 
 def time_span_widget() -> TimeSpan:
     with st.sidebar:
+        time_span = st.radio("Select a time span", TIME_SPAN_VALUES)
         st.write("---")
-        return st.radio("Select a time span", TIME_SPAN_VALUES)
+        return time_span
 
 
 def get_operation_df(time_span: TimeSpan = TIME_SPAN_VALUES[0]) -> pd.DataFrame:
