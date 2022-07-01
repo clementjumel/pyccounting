@@ -56,6 +56,17 @@ def reset_widget() -> None:
                     Base.metadata.create_all(bind=session.bind)
 
 
+def accounts_widget() -> list[str]:
+    with st.sidebar:
+        df = pd.read_sql(sql="operation", con=engine)
+        all_accounts = sorted(set(df["account"].values)) + ["total"]
+
+        st.write("Select your account(s):")
+        accounts = [account for account in all_accounts if st.checkbox(account, value=True)]
+        st.write("---")
+        return accounts
+
+
 TimeSpan = Literal["All", "Last year", "Last month", "Last week"]
 TIME_SPAN_VALUES = TimeSpan.__args__  # type: ignore
 

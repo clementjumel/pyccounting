@@ -50,8 +50,9 @@ def plot_total(
 
     initial_amount: float = 0.0
     for account in accounts:
-        df_account = df.loc[df["account"] == account]
-        initial_amount += df_account.iloc[0]["initial_amount"]
+        if account != "total":
+            df_account = df.loc[df["account"] == account]
+            initial_amount += df_account.iloc[0]["initial_amount"]
 
     amount: float = initial_amount
     x, y = [initial_date], [initial_amount]

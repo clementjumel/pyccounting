@@ -5,6 +5,7 @@ import streamlit as st
 
 from pyccounting.database import (
     TimeSpan,
+    accounts_widget,
     anonymous_mode_widget,
     get_operation_df,
     reset_widget,
@@ -13,6 +14,7 @@ from pyccounting.database import (
 from pyccounting.plot import plot_account, plot_total
 
 anonymous_mode: bool = anonymous_mode_widget()
+accounts: list[str] = accounts_widget()
 time_span: TimeSpan = time_span_widget()
 reset_widget()
 
@@ -28,31 +30,24 @@ else:
     dates = df.index.values
     initial_date, final_date = min(dates), max(dates)
 
-    st.write("Select the account you want to display:")
-    accounts: list[str] = sorted(set(df["account"].values))
-    display_accounts = [account for account in accounts if st.checkbox(account, value=True)]
-    display_total = st.checkbox("total", value=True)
-
-    st.write("")
-
     fig, ax = plt.subplots()
-    for account in display_accounts:
-        plot_account(
-            ax=ax,
-            df=df,
-            account=account,
-            initial_date=initial_date,
-            final_date=final_date,
-            anonymous_mode=anonymous_mode,
-        )
-
-    if display_total:
-        plot_total(
-            ax=ax,
-            df=df,
-            accounts=accounts,
-            anonymous_mode=anonymous_mode,
-        )
+    for account in accounts:
+        if account != "total":
+            plot_account(
+                ax=ax,
+                df=df,
+                account=account,
+                initial_date=initial_date,
+                final_date=final_date,
+                anonymous_mode=anonymous_mode,
+            )
+        else:
+            plot_total(
+                ax=ax,
+                df=df,
+                accounts=accounts,
+                anonymous_mode=anonymous_mode,
+            )
 
     if not anonymous_mode:
         ax.axhline(y=0, color="k")
