@@ -9,9 +9,7 @@ from pyccounting.database import (
     reset_widget,
     time_span_widget,
 )
-from pyccounting.plot import plot
-from pyccounting.statistics import statistics
-from pyccounting.table import table
+from pyccounting.display import plot, statistics, table
 
 anonymous_mode: bool = anonymous_mode_widget()
 accounts: list[str] = accounts_widget()
