@@ -77,5 +77,6 @@ def plot(
     ax.grid(True, which="both")
     ax.set_yticklabels([])
     plt.xlim(dates[0], dates[1])
+    plt.yticks(range(-10000, 80001, 10000))
     plt.legend()
     st.pyplot(fig=fig)
