@@ -6,8 +6,7 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting.database import Operation, engine, get_operation_df
-from pyccounting.widgets import reset_widget
+from pyccounting import db, widgets
 
 account = st.selectbox("Account", ("bnp", "fortuneo"))
 uploaded_file = st.file_uploader(label="Upload a file", type=["csv", "xls"])
@@ -25,7 +24,7 @@ if uploaded_file is not None:
 
     st.dataframe(df_input)
 
-    df_operation: pd.DataFrame = get_operation_df()
+    df_operation: pd.DataFrame = db.get_operation_df()
     df_operation = df_operation.loc[df_operation["account"] == account]
     if df_operation.empty:
         id_: int = 1
@@ -36,7 +35,7 @@ if uploaded_file is not None:
         id_ = series_latest_operation["id_"] + 1
         amount = series_latest_operation["final_amount"]
 
-    with Session(engine) as session:
+    with Session(db.engine) as session:
         for _, row in df_input.iterrows():
             if account == "bnp":
                 type_ = row["Type operation"]
@@ -57,7 +56,7 @@ if uploaded_file is not None:
                 raise ValueError
 
             final_amount = round(amount + operation_amount, 2)
-            operation = Operation(
+            operation = db.Operation(
                 id_=id_,
                 account=account,
                 type_=type_,
@@ -73,4 +72,4 @@ if uploaded_file is not None:
 
         session.commit()
 
-reset_widget()
+widgets.reset()

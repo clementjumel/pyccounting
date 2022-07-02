@@ -1,30 +1,23 @@
 import pandas as pd
 import streamlit as st
 
-from pyccounting.database import get_operation_df
-from pyccounting.display import plot, statistics, table
-from pyccounting.widgets import (
-    accounts_widget,
-    anonymous_mode_widget,
-    reset_widget,
-    time_span_widget,
-)
+from pyccounting import db, display, widgets
 
-anonymous_mode: bool = anonymous_mode_widget()
-accounts: list[str] = accounts_widget()
-time_span: str = time_span_widget()
-reset_widget()
+anonymous_mode: bool = widgets.anonymous_mode()
+accounts: list[str] = widgets.accounts()
+time_span: str = widgets.time_span()
+widgets.reset()
 
-df: pd.DataFrame = get_operation_df(time_span=time_span)
+df: pd.DataFrame = db.get_operation_df(time_span=time_span)
 
 if df.empty:
     st.write("There's nothing to see, here! ;)")
 
 else:
-    plot(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    display.plot(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
     st.write("---")
 
-    statistics(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    display.statistics(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
     st.write("---")
 
-    table(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    display.table(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
