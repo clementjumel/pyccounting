@@ -34,17 +34,22 @@ with Session(engine) as session:
 
 
 def get_df(
+    accounts: list[str] | None = None,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
+
+    if accounts is not None:
+        df = df.loc[df["account"].isin(accounts)]
+
     df["date"] = df["date"].apply(lambda x: x.date())
     df = df.set_index("date")
 
     if sort_by_date:
         df = df.sort_values(by="date")
 
-    if dates:
+    if dates is not None:
         df = df.loc[dates[0] : dates[1]]  # type: ignore
 
     return df

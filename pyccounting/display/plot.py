@@ -71,16 +71,16 @@ def plot(
         ax.plot(x, y, label="total")
 
     fig, ax = plt.subplots()
+
     for account in accounts:
-        if account != "total":
-            plot_account(ax=ax, account=account)
-        else:
-            plot_total(ax=ax)
+        plot_account(ax=ax, account=account)
+    if len(accounts) > 1:
+        plot_total(ax=ax)
 
     if not anonymous_mode:
         ax.axhline(y=0, color="k")
     ax.grid(True, which="both")
     ax.set_yticklabels([])
-    plt.xlim(min(df.index.values), max(df.index.values))
+    plt.xlim(dates[0], dates[1])
     plt.legend()
     st.pyplot(fig=fig)

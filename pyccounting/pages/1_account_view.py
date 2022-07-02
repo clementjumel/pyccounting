@@ -10,7 +10,11 @@ dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
 widgets.reset()
 
-df: pd.DataFrame = db.get_df(sort_by_date=True, dates=dates)
+df: pd.DataFrame = db.get_df(
+    accounts=accounts,
+    sort_by_date=True,
+    dates=dates,
+)
 
 if df.empty:
     st.write("There's nothing to see, here! ;)")
@@ -22,4 +26,4 @@ else:
     display.statistics(df=df, dates=dates, accounts=accounts, anonymous_mode=anonymous_mode)
     st.write("---")
 
-    display.table(df=df, accounts=accounts, anonymous_mode=anonymous_mode)
+    display.table(df=df, anonymous_mode=anonymous_mode)

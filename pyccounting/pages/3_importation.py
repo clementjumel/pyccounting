@@ -24,8 +24,7 @@ if uploaded_file is not None:
 
     st.dataframe(df_input)
 
-    df: pd.DataFrame = db.get_df(sort_by_date=True)
-    df = df.loc[df["account"] == account]
+    df = db.get_df(accounts=[account], sort_by_date=True)
     if df.empty:
         id_: int = 1
         with open("data/start_amounts.json") as file:
