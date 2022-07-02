@@ -35,7 +35,7 @@ with Session(engine) as session:
 
 def get_df(
     sort_by_date: bool = False,
-    dates: tuple[datetime.date] | tuple[datetime.date, datetime.date] | None = None,
+    dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
     df["date"] = df["date"].apply(lambda x: x.date())
@@ -45,11 +45,6 @@ def get_df(
         df = df.sort_values(by="date")
 
     if dates:
-        if len(dates) == 1:
-            df = df.loc[dates[0] :]  # type: ignore
-        elif len(dates) == 2:
-            df = df.loc[dates[0] : dates[1]]  # type: ignore
-        else:
-            raise ValueError
+        df = df.loc[dates[0] : dates[1]]  # type: ignore
 
     return df

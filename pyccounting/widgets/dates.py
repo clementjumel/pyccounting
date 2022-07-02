@@ -5,7 +5,7 @@ import streamlit as st
 from pyccounting import db
 
 
-def dates_widget() -> tuple[datetime.date] | tuple[datetime.date, datetime.date]:
+def dates_widget() -> tuple[datetime.date, datetime.date]:
     df = db.get_df(sort_by_date=True)
     with st.sidebar:
         dates = st.date_input(
@@ -13,4 +13,10 @@ def dates_widget() -> tuple[datetime.date] | tuple[datetime.date, datetime.date]
             value=(min(df.index), max(df.index)),
         )
         st.write("---")
-        return dates
+
+        if len(dates) == 2:
+            return dates
+        elif len(dates) == 1:
+            return dates[0], datetime.date.today()
+        else:
+            raise ValueError
