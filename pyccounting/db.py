@@ -23,9 +23,9 @@ class Operation(Base):  # type: ignore
     type_ = Column(String)
     label = Column(String)
     date = Column(Date)
-    initial_amount = Column(Float)
+    start_amount = Column(Float)
     operation_amount = Column(Float)
-    final_amount = Column(Float)
+    end_amount = Column(Float)
 
 
 os.makedirs("data/db/", exist_ok=True)

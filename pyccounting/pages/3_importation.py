@@ -28,12 +28,12 @@ if uploaded_file is not None:
     df_operation = df_operation.loc[df_operation["account"] == account]
     if df_operation.empty:
         id_: int = 1
-        with open("data/initial_amounts.json") as file:
+        with open("data/start_amounts.json") as file:
             amount: float = json.load(file)[account]["amount"]
     else:
         series_latest_operation: pd.Series = df_operation.iloc[-1]
         id_ = series_latest_operation["id_"] + 1
-        amount = series_latest_operation["final_amount"]
+        amount = series_latest_operation["end_amount"]
 
     with Session(db.engine) as session:
         for _, row in df_input.iterrows():
@@ -55,20 +55,20 @@ if uploaded_file is not None:
             else:
                 raise ValueError
 
-            final_amount = round(amount + operation_amount, 2)
+            end_amount = round(amount + operation_amount, 2)
             operation = db.Operation(
                 id_=id_,
                 account=account,
                 type_=type_,
                 label=label,
                 date=date,
-                initial_amount=amount,
+                start_amount=amount,
                 operation_amount=operation_amount,
-                final_amount=final_amount,
+                end_amount=end_amount,
             )
             session.add(operation)
             id_ += 1
-            amount = final_amount
+            amount = end_amount
 
         session.commit()
 

@@ -7,28 +7,28 @@ import streamlit as st
 
 def _plot_account(ax: plt.Axes, df: pd.DataFrame, account: str, anonymous_mode: bool) -> None:
     df_account = df.loc[df["account"] == account]
-    initial_date: datetime.date = min(df.index.values)
-    final_date: datetime.date = max(df.index.values)
-    initial_amount: float = df_account.iloc[0]["initial_amount"]
-    final_amount: float = df_account.iloc[-1]["final_amount"]
+    start_date: datetime.date = min(df.index.values)
+    end_date: datetime.date = max(df.index.values)
+    start_amount: float = df_account.iloc[0]["start_amount"]
+    end_amount: float = df_account.iloc[-1]["end_amount"]
 
-    x, y = [initial_date], [initial_amount]
+    x, y = [start_date], [start_amount]
     for date, row in df_account.iterrows():
         x.append(date)
-        y.append(row["final_amount"])
-    x.append(final_date)
-    y.append(final_amount)
+        y.append(row["end_amount"])
+    x.append(end_date)
+    y.append(end_amount)
 
     if not anonymous_mode:
         ax.annotate(
-            text=round(initial_amount, 2),
-            xy=(initial_date, initial_amount),
+            text=round(start_amount, 2),
+            xy=(start_date, start_amount),
             xytext=(-50, 0),
             textcoords="offset points",
         )
         ax.annotate(
-            text=round(final_amount, 2),
-            xy=(final_date, final_amount),
+            text=round(end_amount, 2),
+            xy=(end_date, end_amount),
             xytext=(5, 0),
             textcoords="offset points",
         )
@@ -36,33 +36,33 @@ def _plot_account(ax: plt.Axes, df: pd.DataFrame, account: str, anonymous_mode: 
 
 
 def _plot_total(ax: plt.Axes, df: pd.DataFrame, accounts: list[str], anonymous_mode: bool) -> None:
-    initial_date: datetime.date = df.index[0]
-    final_date: datetime.date = df.index[-1]
+    start_date: datetime.date = df.index[0]
+    end_date: datetime.date = df.index[-1]
 
-    initial_amount: float = 0.0
+    start_amount: float = 0.0
     for account in accounts:
         if account != "total":
             df_account = df.loc[df["account"] == account]
-            initial_amount += df_account.iloc[0]["initial_amount"]
+            start_amount += df_account.iloc[0]["start_amount"]
 
-    amount: float = initial_amount
-    x, y = [initial_date], [initial_amount]
+    amount: float = start_amount
+    x, y = [start_date], [start_amount]
     for date, row in df.iterrows():
         amount += row["operation_amount"]
         x.append(date)
         y.append(amount)
-    final_amount = y[-1]
+    end_amount = y[-1]
 
     if not anonymous_mode:
         ax.annotate(
-            text=round(initial_amount, 2),
-            xy=(initial_date, initial_amount),
+            text=round(start_amount, 2),
+            xy=(start_date, start_amount),
             xytext=(-50, 0),
             textcoords="offset points",
         )
         ax.annotate(
-            text=round(final_amount, 2),
-            xy=(final_date, final_amount),
+            text=round(end_amount, 2),
+            xy=(end_date, end_amount),
             xytext=(5, 0),
             textcoords="offset points",
         )
