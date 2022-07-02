@@ -11,7 +11,9 @@ def plot(
     accounts: list[str],
     anonymous_mode: bool,
 ) -> None:
-    def plot_account(ax: plt.Axes, account: str) -> None:
+    fig, ax = plt.subplots()
+
+    for account in accounts:
         df_account = df.loc[df["account"] == account]
         start_amount: float = df_account.iloc[0]["start_amount"]
         end_amount: float = df_account.iloc[-1]["end_amount"]
@@ -38,8 +40,8 @@ def plot(
             )
         ax.plot(x, y, label=account)
 
-    def plot_total(ax: plt.Axes) -> None:
-        start_amount: float = 0.0
+    if len(accounts) > 1:
+        start_amount = 0.0
         for account in accounts:
             if account != "total":
                 df_account = df.loc[df["account"] == account]
@@ -69,13 +71,6 @@ def plot(
                 textcoords="offset points",
             )
         ax.plot(x, y, label="total")
-
-    fig, ax = plt.subplots()
-
-    for account in accounts:
-        plot_account(ax=ax, account=account)
-    if len(accounts) > 1:
-        plot_total(ax=ax)
 
     if not anonymous_mode:
         ax.axhline(y=0, color="k")
