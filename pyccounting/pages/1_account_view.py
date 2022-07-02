@@ -1,14 +1,16 @@
+import datetime
+
 import pandas as pd
 import streamlit as st
 
 from pyccounting import db, display, widgets
 
 anonymous_mode: bool = widgets.anonymous_mode()
+dates: tuple[datetime.date] | tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
-time_span: str = widgets.time_span()
 widgets.reset()
 
-df: pd.DataFrame = db.get_operation_df(time_span=time_span)
+df: pd.DataFrame = db.get_df(sort_by_date=True, dates=dates)
 
 if df.empty:
     st.write("There's nothing to see, here! ;)")

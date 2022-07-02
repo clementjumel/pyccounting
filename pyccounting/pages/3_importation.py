@@ -24,14 +24,14 @@ if uploaded_file is not None:
 
     st.dataframe(df_input)
 
-    df_operation: pd.DataFrame = db.get_operation_df()
-    df_operation = df_operation.loc[df_operation["account"] == account]
-    if df_operation.empty:
+    df: pd.DataFrame = db.get_df(sort_by_date=True)
+    df = df.loc[df["account"] == account]
+    if df.empty:
         id_: int = 1
         with open("data/start_amounts.json") as file:
             amount: float = json.load(file)[account]["amount"]
     else:
-        series_latest_operation: pd.Series = df_operation.iloc[-1]
+        series_latest_operation: pd.Series = df.iloc[-1]
         id_ = series_latest_operation["id_"] + 1
         amount = series_latest_operation["end_amount"]
 

@@ -33,28 +33,23 @@ with Session(engine) as session:
     Base.metadata.create_all(bind=session.bind)
 
 
-def get_operation_df(time_span: str = "All") -> pd.DataFrame:
+def get_df(
+    sort_by_date: bool = False,
+    dates: tuple[datetime.date] | tuple[datetime.date, datetime.date] | None = None,
+) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
-
     df["date"] = df["date"].apply(lambda x: x.date())
-    df = df.sort_values(by="date")
     df = df.set_index("date")
 
-    if time_span == "All":
-        pass
-    else:
-        if time_span == "Last year":
-            days = 365
-        elif time_span == "Last quarter":
-            days = 93
-        elif time_span == "Last month":
-            days = 31
-        elif time_span == "Last week":
-            days = 7
+    if sort_by_date:
+        df = df.sort_values(by="date")
+
+    if dates:
+        if len(dates) == 1:
+            df = df.loc[dates[0] :]  # type: ignore
+        elif len(dates) == 2:
+            df = df.loc[dates[0] : dates[1]]  # type: ignore
         else:
             raise ValueError
-        min_datetime = datetime.datetime.now() - datetime.timedelta(days=days)
-        min_date = min_datetime.date()
-        df = df.loc[min_date:]  # type: ignore
 
     return df
