@@ -20,10 +20,17 @@ if df.empty:
     st.write("There's nothing to see, here! ;)")
 
 else:
-    display.plot(df=df, dates=dates, accounts=accounts, anonymous_mode=anonymous_mode)
+    display.plot(
+        df=df,
+        dates=dates,
+        accounts=accounts,
+        anonymous_mode=anonymous_mode,
+    )
     st.write("---")
 
-    display.statistics(df=df, dates=dates, accounts=accounts, anonymous_mode=anonymous_mode)
-    st.write("---")
-
-    display.table(df=df, anonymous_mode=anonymous_mode)
+    display.statistics(
+        df=df,
+        dates=dates,
+        accounts=accounts,
+        anonymous_mode=anonymous_mode,
+    )

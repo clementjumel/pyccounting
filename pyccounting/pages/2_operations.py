@@ -6,10 +6,18 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, widgets
+from pyccounting import db, display, widgets
 
-account = st.selectbox("Account", ("bnp", "fortuneo"))
-uploaded_file = st.file_uploader(label="Upload a file", type=["csv", "xls"])
+anonymous_mode: bool = widgets.anonymous_mode()
+dates: tuple[datetime.date, datetime.date] = widgets.dates()
+accounts: list[str] = widgets.accounts()
+widgets.reset()
+
+st.write("### Importation")
+
+account = st.radio("Account:", ("bnp", "fortuneo"))
+uploaded_file = st.file_uploader(label="Upload a file:", type=["csv", "xls"])
+
 if uploaded_file is not None:
 
     if account == "bnp":
@@ -71,4 +79,16 @@ if uploaded_file is not None:
 
         session.commit()
 
-widgets.reset()
+st.write("### All operations")
+
+df = db.get_df(
+    accounts=accounts,
+    sort_by_date=True,
+    dates=dates,
+)
+
+if df.empty:
+    st.write("There's nothing to see, here! ;)")
+
+else:
+    display.table(df=df, anonymous_mode=anonymous_mode)
