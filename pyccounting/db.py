@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
-from sqlalchemy import Column, Date, Float, Integer, String, create_engine
+from sqlalchemy import Boolean, Column, Date, Float, Integer, String, create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, declarative_base
 
@@ -25,6 +25,7 @@ class Operation(Base):  # type: ignore
     date = Column(Date)
     amount = Column(Float)
     category = Column(String)
+    validated = Column(Boolean)
 
     def apply_category_rules(self, category_rules: list[CategoryRule]) -> None:
         if self.category != "":
@@ -67,6 +68,7 @@ def get_df(
     date_index: bool = True,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
+    validated_status: bool | None = None,
 ) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
 
@@ -83,6 +85,9 @@ def get_df(
 
     if categories is not None:
         df = df.loc[df["category"].isin(categories)]
+
+    if validated_status is not None:
+        df = df.loc[df["validated"] == validated_status]
 
     df["date"] = df["date"].apply(lambda x: x.date())
     if date_index:
