@@ -7,11 +7,13 @@ from pyccounting import db, display, widgets
 
 anonymous_mode: bool = widgets.anonymous_mode()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
-accounts: list[str] = widgets.accounts()
+accounts: list[str] = widgets.accounts(extended=True)
+types: list[str] = widgets.types(extended=True)
 widgets.reset()
 
 df: pd.DataFrame = db.get_df(
     accounts=accounts,
+    types=types,
     sort_by_date=True,
     dates=dates,
 )
@@ -24,6 +26,7 @@ else:
         df=df,
         dates=dates,
         accounts=accounts,
+        types=types,
         anonymous_mode=anonymous_mode,
     )
     st.write("---")
@@ -32,5 +35,6 @@ else:
         df=df,
         dates=dates,
         accounts=accounts,
+        types=types,
         anonymous_mode=anonymous_mode,
     )

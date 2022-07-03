@@ -11,6 +11,7 @@ from pyccounting import db, display, widgets
 anonymous_mode: bool = widgets.anonymous_mode()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
+types: list[str] = widgets.types()
 widgets.reset()
 
 st.write("### Importation")
@@ -83,6 +84,7 @@ st.write("### All operations")
 
 df = db.get_df(
     accounts=accounts,
+    types=types,
     sort_by_date=True,
     dates=dates,
 )

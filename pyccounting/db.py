@@ -35,6 +35,7 @@ with Session(engine) as session:
 
 def get_df(
     accounts: list[str] | None = None,
+    types: list[str] | None = None,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
@@ -42,6 +43,14 @@ def get_df(
 
     if accounts is not None:
         df = df.loc[df["account"].isin(accounts)]
+
+    if types is not None:
+        if types == ["expenses"]:
+            df = df.loc[df["operation_amount"] < 0]
+        elif types == ["incomes"]:
+            df = df.loc[df["operation_amount"] >= 0]
+        elif not types:
+            df = df.loc[[False for _ in df.index]]
 
     df["date"] = df["date"].apply(lambda x: x.date())
     df = df.set_index("date")
