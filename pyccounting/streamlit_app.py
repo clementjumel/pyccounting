@@ -1,3 +1,3 @@
 import streamlit as st
 
-st.write("Welcome in Pyccounting.")
+st.write("Welcome in Pyccounting. 😎")

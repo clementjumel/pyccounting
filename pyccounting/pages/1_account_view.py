@@ -19,7 +19,7 @@ df: pd.DataFrame = db.get_df(
 )
 
 if df.empty:
-    st.write("There's nothing to see, here! ;)")
+    st.write("There's nothing to see here! 😇")
 
 else:
     display.plot(

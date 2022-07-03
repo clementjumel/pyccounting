@@ -46,13 +46,13 @@ def statistics(
     types: list[str],
     anonymous_mode: bool,
 ) -> None:
-    st.markdown("### Statistics")
+    st.write("### Statistics")
 
     days = (dates[1] - dates[0]).days
     months = days / 31
     years = days / 365
 
-    st.markdown("#### General")
+    st.write("#### General")
 
     account_stats: dict[str, Any] = {
         "Duration in days": days,
@@ -64,7 +64,7 @@ def statistics(
     _display_stats(stats=stats, anonymous_mode=False)
 
     for type_ in types:
-        st.markdown(f"#### {type_.capitalize()}")
+        st.write(f"#### {type_.capitalize()}")
         stats = {}
         for account in accounts:
 
