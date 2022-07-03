@@ -31,6 +31,9 @@ else:
     )
     st.write("---")
 
+    display.pie_chart(df=df, types=types)
+    st.write("---")
+
     display.statistics(
         df=df,
         dates=dates,
