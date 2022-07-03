@@ -4,6 +4,7 @@ import datetime
 import os
 
 import pandas as pd
+import streamlit as st
 from dotenv import load_dotenv
 from sqlalchemy import Column, Date, Float, Integer, String, create_engine
 from sqlalchemy.engine import Engine
@@ -20,10 +21,38 @@ class Operation(Base):  # type: ignore
 
     id_ = Column(Integer, primary_key=True, index=True)
     account = Column(String, primary_key=True, index=True)
-    type_ = Column(String)
     label = Column(String)
     date = Column(Date)
     amount = Column(Float)
+    category = Column(String)
+
+    def apply_category_rules(self, category_rules: list[CategoryRule]) -> None:
+        if self.category != "":
+            return
+
+        target_tokens = [token.upper() for token in self.label.strip().split()]
+        target = " ".join(target_tokens)
+        for category_rule in category_rules:
+            content_tokens = [token.upper() for token in category_rule.content.strip().split()]
+            content = " ".join(content_tokens)
+
+            match = False
+            if len(content_tokens) == 1 and content_tokens[0] in target_tokens:
+                match = True
+            elif len(content_tokens) > 1 and content in target:
+                match = True
+
+            if match:
+                self.category = category_rule.category
+                st.write(f"Category found for '{self.label}': {self.category}.")
+                return
+
+
+class CategoryRule(Base):  # type: ignore
+    __tablename__ = "category_rule"
+
+    category = Column(String, primary_key=True, index=True)
+    content = Column(String, primary_key=True, index=True)
 
 
 os.makedirs("data/db/", exist_ok=True)
@@ -34,6 +63,7 @@ with Session(engine) as session:
 def get_df(
     accounts: list[str] | None = None,
     types: list[str] | None = None,
+    categories: list[str] | None = None,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
@@ -49,6 +79,9 @@ def get_df(
             df = df.loc[df["amount"] >= 0]
         elif not types:
             df = df.loc[[False for _ in df.index]]
+
+    if categories is not None:
+        df = df.loc[df["category"].isin(categories)]
 
     df["date"] = df["date"].apply(lambda x: x.date())
     df = df.set_index("date")

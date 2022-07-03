@@ -3,7 +3,7 @@ import streamlit as st
 
 
 def table(df: pd.DataFrame, anonymous_mode: bool) -> None:
-    columns = ["account", "label", "type_"]
+    columns = ["account", "label", "category"]
     if not anonymous_mode:
         columns = ["amount"] + columns
 
