@@ -33,7 +33,7 @@ def _plot_line(
 
     amount: float = start_amount
     for date, row in df.iterrows():
-        amount += row["operation_amount"]
+        amount += row["amount"]
         x.append(date)
         y.append(amount)
 
@@ -80,9 +80,9 @@ def plot(
 
             df_ = df.loc[df["account"] == account] if account != "total" else df
             if type_ == "expenses":
-                df_ = df_.loc[df_["operation_amount"] < 0]
+                df_ = df_.loc[df_["amount"] < 0]
             elif type_ == "incomes":
-                df_ = df_.loc[df_["operation_amount"] >= 0]
+                df_ = df_.loc[df_["amount"] >= 0]
             elif type_ == "expenses & incomes":
                 pass
             else:

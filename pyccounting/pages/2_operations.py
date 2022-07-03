@@ -1,5 +1,4 @@
 import datetime
-import json
 
 import numpy as np
 import pandas as pd
@@ -34,14 +33,7 @@ if uploaded_file is not None:
     st.dataframe(df_input)
 
     df = db.get_df(accounts=[account], sort_by_date=True)
-    if df.empty:
-        id_: int = 1
-        with open("data/start_amounts.json") as file:
-            amount: float = json.load(file)[account]["amount"]
-    else:
-        series_latest_operation: pd.Series = df.iloc[-1]
-        id_ = series_latest_operation["id_"] + 1
-        amount = series_latest_operation["end_amount"]
+    id_: int = 1 if df.empty else df.iloc[-1]["id_"] + 1
 
     with Session(db.engine) as session:
         for _, row in df_input.iterrows():
@@ -49,34 +41,30 @@ if uploaded_file is not None:
                 type_ = row["Type operation"]
                 label = row["Libelle operation"]
                 date = datetime.datetime.strptime(row["Date operation"], "%d/%m/%Y").date()
-                operation_amount = float(row["Montant operation en euro"].replace(",", "."))
+                amount = float(row["Montant operation en euro"].replace(",", "."))
             elif account == "fortuneo":
                 type_ = "unknown"
                 label = row["libellé"]
                 date = datetime.datetime.strptime(row["Date opération"], "%d/%m/%Y").date()
                 if row["Débit"] and row["Crédit"] is np.nan:
-                    operation_amount = float(row["Débit"].replace(",", "."))
+                    amount = float(row["Débit"].replace(",", "."))
                 elif row["Crédit"] and row["Débit"] is np.nan:
-                    operation_amount = float(row["Crédit"].replace(",", "."))
+                    amount = float(row["Crédit"].replace(",", "."))
                 else:
                     raise ValueError
             else:
                 raise ValueError
 
-            end_amount = round(amount + operation_amount, 2)
             operation = db.Operation(
                 id_=id_,
                 account=account,
                 type_=type_,
                 label=label,
                 date=date,
-                start_amount=amount,
-                operation_amount=operation_amount,
-                end_amount=end_amount,
+                amount=amount,
             )
             session.add(operation)
             id_ += 1
-            amount = end_amount
 
         session.commit()
 

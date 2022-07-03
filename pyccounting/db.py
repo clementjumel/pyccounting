@@ -23,9 +23,7 @@ class Operation(Base):  # type: ignore
     type_ = Column(String)
     label = Column(String)
     date = Column(Date)
-    start_amount = Column(Float)
-    operation_amount = Column(Float)
-    end_amount = Column(Float)
+    amount = Column(Float)
 
 
 os.makedirs("data/db/", exist_ok=True)
@@ -46,9 +44,9 @@ def get_df(
 
     if types is not None:
         if types == ["expenses"]:
-            df = df.loc[df["operation_amount"] < 0]
+            df = df.loc[df["amount"] < 0]
         elif types == ["incomes"]:
-            df = df.loc[df["operation_amount"] >= 0]
+            df = df.loc[df["amount"] >= 0]
         elif not types:
             df = df.loc[[False for _ in df.index]]
 

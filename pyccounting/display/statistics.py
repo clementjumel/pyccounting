@@ -16,11 +16,11 @@ def _get_account_stats(
         "Num./day": len(df) / days,
         "Num./month": len(df) / months,
         "Num./year": len(df) / years,
-        "Max value": max(df["operation_amount"]),
-        "Sum": sum(df["operation_amount"]),
-        "Sum/day": sum(df["operation_amount"]) / days,
-        "Sum/month": sum(df["operation_amount"]) / months,
-        "Sum/year": sum(df["operation_amount"]) / years,
+        "Max value": max(df["amount"]),
+        "Sum": sum(df["amount"]),
+        "Sum/day": sum(df["amount"]) / days,
+        "Sum/month": sum(df["amount"]) / months,
+        "Sum/year": sum(df["amount"]) / years,
     }
 
 
@@ -70,9 +70,9 @@ def statistics(
 
             df_ = df.loc[df["account"] == account] if account != "total" else df
             if type_ == "expenses":
-                df_ = -1 * df_.loc[df_["operation_amount"] < 0]
+                df_ = -1 * df_.loc[df_["amount"] < 0]
             elif type_ == "incomes":
-                df_ = df_.loc[df_["operation_amount"] >= 0]
+                df_ = df_.loc[df_["amount"] >= 0]
             elif type_ == "expenses & incomes":
                 pass
             else:
