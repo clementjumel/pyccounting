@@ -64,6 +64,7 @@ def get_df(
     accounts: list[str] | None = None,
     types: list[str] | None = None,
     categories: list[str] | None = None,
+    date_index: bool = True,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
@@ -84,7 +85,8 @@ def get_df(
         df = df.loc[df["category"].isin(categories)]
 
     df["date"] = df["date"].apply(lambda x: x.date())
-    df = df.set_index("date")
+    if date_index:
+        df = df.set_index("date")
 
     if sort_by_date:
         df = df.sort_values(by="date")
