@@ -16,7 +16,7 @@ def _get_account_stats(
         "Num./day": len(df) / days,
         "Num./month": len(df) / months,
         "Num./year": len(df) / years,
-        "Max value": max(df["amount"]),
+        "Max value": max(df["amount"]) if not df["amount"].empty else 0,
         "Sum": sum(df["amount"]),
         "Sum/day": sum(df["amount"]) / days,
         "Sum/month": sum(df["amount"]) / months,
