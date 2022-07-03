@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import json
 import os
 
 import pandas as pd
@@ -100,3 +101,17 @@ def get_df(
         df = df.loc[dates[0] : dates[1]]  # type: ignore
 
     return df
+
+
+def get_start_amount(accounts: list[str], date: datetime.date) -> float:
+    start_amount: float = 0.0
+    with open("data/start_amounts.json") as file:
+        d = json.load(file)
+        for account in accounts:
+            start_amount += d[account]["amount"]
+
+    df = get_df(accounts=accounts, sort_by_date=True)
+    df = df.loc[:date]  # type: ignore
+    start_amount += sum(df["amount"])
+
+    return start_amount

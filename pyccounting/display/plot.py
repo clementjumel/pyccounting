@@ -1,9 +1,10 @@
 import datetime
-import json
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
+
+from pyccounting import db
 
 COLORS = [
     "#1f77b4",
@@ -66,16 +67,16 @@ def plot(
 ) -> None:
     fig, ax = plt.subplots()
 
-    start_amounts: dict[str, float] = {"total": 0.0}
-    with open("data/start_amounts.json") as file:
-        d = json.load(file)
-        for account in accounts:
-            if account != "total":
-                start_amounts[account] = d[account]["amount"]
-                start_amounts["total"] += d[account]["amount"]
-
     for i, account in enumerate(accounts):
         color = COLORS[i]
+        if account != "total":
+            start_amount = db.get_start_amount(accounts=[account], date=dates[0])
+        else:
+            start_amount = db.get_start_amount(
+                accounts=[account for account in accounts if account != "total"],
+                date=dates[0],
+            )
+
         for type_ in types:
 
             df_ = df.loc[df["account"] == account] if account != "total" else df
@@ -95,6 +96,8 @@ def plot(
             if type_ != "expenses & incomes":
                 kwargs["linestyle"] = "dashed"
                 kwargs["linewidth"] = 0.6
+                kwargs["marker"] = "o"
+                kwargs["markersize"] = 0.6
                 annotate = False
 
             _plot_line(
@@ -102,7 +105,7 @@ def plot(
                 df=df_,
                 anonymous_mode=anonymous_mode,
                 dates=dates,
-                start_amount=start_amounts[account],
+                start_amount=start_amount,
                 annotate=annotate,
                 kwargs=kwargs,
             )
