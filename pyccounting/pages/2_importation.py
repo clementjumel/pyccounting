@@ -7,10 +7,10 @@ from sqlalchemy.orm import Session
 
 from pyccounting import db, widgets
 
-anonymous_mode: bool = widgets.anonymous_mode()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
 types: list[str] = widgets.types()
+anonymous_mode: bool = widgets.anonymous_mode()
 widgets.reset()
 
 st.write("### Importation")

@@ -5,10 +5,10 @@ import streamlit as st
 
 from pyccounting import db, display, widgets
 
-anonymous_mode: bool = widgets.anonymous_mode()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts(extended=True)
 types: list[str] = widgets.types(extended=True)
+anonymous_mode: bool = widgets.anonymous_mode()
 widgets.reset()
 
 df: pd.DataFrame = db.get_df(
