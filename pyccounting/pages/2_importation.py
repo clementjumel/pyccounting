@@ -17,7 +17,6 @@ st.write("### Importation")
 
 account = st.radio("Account:", ("bnp", "fortuneo"))
 uploaded_file = st.file_uploader(label="Upload a file:", type=["csv", "xls"])
-
 if uploaded_file is not None:
 
     if account == "bnp":
