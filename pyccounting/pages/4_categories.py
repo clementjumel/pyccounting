@@ -29,7 +29,7 @@ st.write("### Categories")
 df = db.get_df(date_index=False, categories=[""])
 
 if df.empty:
-    st.write("All the operations have a category.")
+    st.write("All the operations have a category! 🥳")
 
 else:
     st.write(f"The following {len(df.index)} operations have no category:")
