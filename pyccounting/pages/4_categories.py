@@ -51,7 +51,10 @@ with st.form("category_rule"):
 
             operations = session.query(db.Operation).filter(db.Operation.category == "").all()
             for operation in operations:
-                operation.apply_category_rules(category_rules=[category_rule])
+                operation.apply_category_rules(
+                    category_rules=[category_rule],
+                    anonymous_mode=anonymous_mode,
+                )
 
             session.commit()
 
@@ -59,26 +62,30 @@ if not df.empty:
     with st.form("category_selection"):
         st.write("You can manually mark the remaining operations:")
         category = st.selectbox("Select a category: ", CATEGORIES)
-        with Session(db.engine) as session:
-            operations = session.query(db.Operation).filter(db.Operation.category == "").all()
-            operation_labels = [operation.label for operation in operations[:10]]
 
-        checks: dict[str, bool] = {}
-        for i, operation_label in enumerate(operation_labels):
-            checks[operation_label] = st.checkbox(
-                label=operation_label,
+        with Session(db.engine) as session:
+            query = session.query(db.Operation).filter(db.Operation.category == "")
+            operations = query.all()[:10]
+
+        operations_dict: dict[int, db.Operation] = {
+            operation.id_: operation for operation in operations
+        }
+        checks: dict[int, bool] = {}
+        for id_, operation in operations_dict.items():
+            checks[id_] = st.checkbox(
+                label=operation.to_string(anonymous_mode=anonymous_mode),
                 value=False,
-                key=f"{i}_{operation_label}",
+                key=f"category_selection_{id_}",
             )
 
         if st.form_submit_button("Submit"):
             with Session(db.engine) as session:
-                cmpt = 0
-                operations = session.query(db.Operation).filter(db.Operation.category == "").all()
-                for operation in operations:
-                    if operation.label in checks and checks[operation.label]:
-                        operation.category = category
-                        cmpt += 1
+                for id_ in checks:
+                    if checks[id_]:
+                        query = session.query(db.Operation).filter(db.Operation.id_ == id_)
+                        operation = query.one()
+                        operation.set_category(category=category, anonymous_mode=anonymous_mode)
 
                 session.commit()
-            st.write(f"{cmpt} operation categories set to {category}.")
+
+            st.experimental_rerun()

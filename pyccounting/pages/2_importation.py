@@ -63,7 +63,10 @@ if uploaded_file is not None:
                 amount=amount,
                 category="",
             )
-            operation.apply_category_rules(category_rules=category_rules)
+            operation.apply_category_rules(
+                category_rules=category_rules,
+                anonymous_mode=anonymous_mode,
+            )
             session.add(operation)
             id_ += 1
 

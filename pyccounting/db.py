@@ -28,7 +28,27 @@ class Operation(Base):  # type: ignore
     category = Column(String)
     validated = Column(Boolean)
 
-    def apply_category_rules(self, category_rules: list[CategoryRule]) -> None:
+    def to_string(self, anonymous_mode: bool) -> str:
+        attrs = ["date", "label", "account", "category"]
+        if not anonymous_mode:
+            attrs = ["amount"] + attrs
+        return ", ".join([getattr(self, attr) for attr in attrs])
+
+    def set_validated(self, anonymous_mode: bool) -> None:
+        self.validated = True
+        text = self.to_string(anonymous_mode=anonymous_mode)
+        st.write(f"Validation of operation '{text}'.")
+
+    def set_category(self, category: str, anonymous_mode: bool) -> None:
+        self.category = category
+        text = self.to_string(anonymous_mode=anonymous_mode)
+        st.write(f"Category '{category}' set for operation '{text}'.")
+
+    def apply_category_rules(
+        self,
+        category_rules: list[CategoryRule],
+        anonymous_mode: bool,
+    ) -> None:
         if self.category != "":
             return
 
@@ -45,8 +65,10 @@ class Operation(Base):  # type: ignore
                 match = True
 
             if match:
-                self.category = category_rule.category
-                st.write(f"Category found for '{self.label}': {self.category}.")
+                self.set_category(
+                    category=category_rule.category,
+                    anonymous_mode=anonymous_mode,
+                )
                 return
 
 
