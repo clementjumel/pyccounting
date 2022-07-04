@@ -16,6 +16,8 @@ widgets.reset()
 st.write("### Importation")
 
 account = st.radio("Account:", ("bnp", "fortuneo"))
+validated = st.checkbox("Validated", value=False)
+
 uploaded_file = st.file_uploader(label="Upload a file:", type=["csv", "xls"])
 if uploaded_file is not None:
 
@@ -61,6 +63,7 @@ if uploaded_file is not None:
                 date=date,
                 amount=amount,
                 category="",
+                validated=validated,
             )
             operation.apply_category_rules(
                 category_rules=category_rules,
