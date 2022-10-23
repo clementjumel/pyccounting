@@ -15,7 +15,6 @@ def get_df(
     date_index: bool = True,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
-    validated_status: bool | None = None,
 ) -> pd.DataFrame:
     df = pd.read_sql(sql="operation", con=engine)
 
@@ -32,9 +31,6 @@ def get_df(
 
     if category_names is not None:
         df = df.loc[df["category_name"].isin(category_names)]
-
-    if validated_status is not None:
-        df = df.loc[df["validated"] == validated_status]
 
     df["date"] = df["date"].apply(lambda x: x.date())
     if date_index:
