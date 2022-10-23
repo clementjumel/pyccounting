@@ -4,11 +4,9 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, widgets
+from pyccounting import db, initialize
 
 initialize.initialize()
-
-widgets.reset()
 
 df = pd.read_sql(sql="category_rule", con=db.engine)
 

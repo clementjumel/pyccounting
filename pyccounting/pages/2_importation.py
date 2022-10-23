@@ -12,8 +12,6 @@ initialize.initialize()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
 types: list[str] = widgets.types()
-anonymous_mode: bool = widgets.anonymous_mode()
-widgets.reset()
 
 st.write("### Importation")
 
@@ -69,7 +67,7 @@ if uploaded_file is not None:
             )
             operation.apply_category_rules(
                 category_rules=category_rules,
-                anonymous_mode=anonymous_mode,
+                anonymous_mode=False,
             )
             session.add(operation)
             id_ += 1
@@ -87,8 +85,6 @@ df = orm.get_df(
 )
 
 st.write(f"{len(df.index)} operations:")
-columns = ["account", "label", "category"]
-if not anonymous_mode:
-    columns = ["amount"] + columns
+columns = ["amount", "account", "label", "category"]
 
 st.dataframe(df[columns])

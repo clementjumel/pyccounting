@@ -85,4 +85,4 @@ def statistics(
                 years=years,
             )
 
-        _display_stats(stats=stats, anonymous_mode=anonymous_mode)
+        _display_stats(stats=stats, anonymous_mode=False)

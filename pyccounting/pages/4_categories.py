@@ -1,12 +1,9 @@
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, orm, widgets
+from pyccounting import db, initialize, orm
 
 initialize.initialize()
-
-anonymous_mode: bool = widgets.anonymous_mode()
-widgets.reset()
 
 CATEGORIES = [
     "restaurant & bars",
@@ -35,9 +32,7 @@ if df.empty:
 
 else:
     st.write(f"The following {len(df.index)} operations have no category:")
-    columns = ["date", "account", "label"]
-    if not anonymous_mode:
-        columns = ["amount"] + columns
+    columns = ["amount", "date", "account", "label"]
     st.dataframe(df[columns])
 
 with st.form("category_rule"):
@@ -55,7 +50,7 @@ with st.form("category_rule"):
             for operation in operations:
                 operation.apply_category_rules(
                     category_rules=[category_rule],
-                    anonymous_mode=anonymous_mode,
+                    anonymous_mode=False,
                 )
 
             session.commit()
@@ -75,7 +70,7 @@ if not df.empty:
         checks: dict[int, bool] = {}
         for id_, operation in operations_dict.items():
             checks[id_] = st.checkbox(
-                label=operation.to_string(anonymous_mode=anonymous_mode),
+                label=operation.to_string(anonymous_mode=False),
                 value=False,
                 key=f"category_selection_{id_}",
             )
@@ -86,7 +81,7 @@ if not df.empty:
                     if checks[id_]:
                         query = session.query(db.Operation).filter(db.Operation.id_ == id_)
                         operation = query.one()
-                        operation.set_category(category=category, anonymous_mode=anonymous_mode)
+                        operation.set_category(category=category, anonymous_mode=False)
 
                 session.commit()
 
