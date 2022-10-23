@@ -2,12 +2,12 @@ import datetime
 
 import streamlit as st
 
-from pyccounting import db
+from pyccounting import orm
 
 
 def dates_widget() -> tuple[datetime.date, datetime.date]:
     with st.sidebar:
-        df = db.get_df(sort_by_date=True)
+        df = orm.get_df(sort_by_date=True)
         if not df.empty:
             value = (min(df.index), max(df.index))
         else:

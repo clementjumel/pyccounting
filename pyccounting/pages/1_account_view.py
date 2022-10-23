@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import streamlit as st
 
-from pyccounting import db, display, initialize, widgets
+from pyccounting import display, initialize, orm, widgets
 
 initialize.initialize()
 
@@ -13,7 +13,7 @@ types: list[str] = widgets.types(extended=True)
 anonymous_mode: bool = widgets.anonymous_mode()
 widgets.reset()
 
-df: pd.DataFrame = db.get_df(
+df: pd.DataFrame = orm.get_df(
     accounts=accounts,
     types=types,
     sort_by_date=True,

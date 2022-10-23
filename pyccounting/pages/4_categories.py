@@ -1,7 +1,7 @@
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, widgets
+from pyccounting import db, initialize, orm, widgets
 
 initialize.initialize()
 
@@ -28,7 +28,7 @@ CATEGORIES = [
 
 st.write("### Categories")
 
-df = db.get_df(date_index=False, categories=[""])
+df = orm.get_df(date_index=False, categories=[""])
 
 if df.empty:
     st.write("All the operations have a category! 🥳")
