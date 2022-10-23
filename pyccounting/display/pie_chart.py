@@ -6,20 +6,20 @@ import streamlit as st
 def _plot_pie(df: pd.DataFrame) -> None:
     fig, ax = plt.subplots()
 
-    categories = [category for category in sorted(set(df["category"])) if category]
+    category_names = sorted(set(df["category_name"]))
     all_sizes, total_size = [], 0.0
-    for category in categories:
+    for category_name in category_names:
         size = 0.0
-        for _, row in df.loc[df["category"] == category].iterrows():
+        for _, row in df.loc[df["category_name"] == category_name].iterrows():
             size += abs(row["amount"])
         all_sizes.append(size)
         total_size += size
 
     labels, sizes = [], []
     other_size = 0.0
-    for category, size in zip(categories, all_sizes):
+    for category_name, size in zip(category_names, all_sizes):
         if size / total_size > 0.03:
-            labels.append(category)
+            labels.append(category_name)
             sizes.append(size)
         else:
             other_size += size
