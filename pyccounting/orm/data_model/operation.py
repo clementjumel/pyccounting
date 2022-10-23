@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String
 
@@ -13,7 +13,7 @@ class Operation(Base):
     idx: int = Column(Integer, primary_key=True)
 
     label: str = Column(String)
-    date: datetime = Column(Date)
+    date: datetime.date = Column(Date)
     amount: float = Column(Float)
     category_name: str = Column(String, ForeignKey("category.name"))
 
