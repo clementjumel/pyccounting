@@ -5,18 +5,18 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, orm, widgets
+from pyccounting import initialize, orm, widgets
 
 initialize.initialize()
 
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()
 types: list[str] = widgets.types()
+category_names: list[str] = widgets.categories()
 
 st.write("### Importation")
 
 account = st.radio("Account:", ("bnp", "fortuneo"))
-validated = st.checkbox("Validated", value=False)
 
 uploaded_file = st.file_uploader(label="Upload a file:", type=["csv", "xls"])
 if uploaded_file is not None:
@@ -34,10 +34,10 @@ if uploaded_file is not None:
     st.dataframe(df_input)
 
     df = orm.get_df(accounts=[account], sort_by_date=True)
-    id_: int = 1 if df.empty else df.iloc[-1]["id_"] + 1
+    idx: int = 1 if df.empty else df.iloc[-1]["idx"] + 1
 
-    with Session(db.engine) as session:
-        category_rules = session.query(db.CategoryRule).all()
+    with Session(orm.engine) as session:
+        category_rules = session.query(orm.CategoryRule).all()
 
         for _, row in df_input.iterrows():
             if account == "bnp":
@@ -56,21 +56,17 @@ if uploaded_file is not None:
             else:
                 raise ValueError
 
-            operation = db.Operation(
-                id_=id_,
+            operation = orm.Operation(
+                idx=idx,
                 account=account,
                 label=label,
                 date=date,
                 amount=amount,
-                category="",
-                validated=validated,
+                category_name="none",
             )
-            operation.apply_category_rules(
-                category_rules=category_rules,
-                anonymous_mode=False,
-            )
+            operation.find_category_name(category_rules=category_rules)
             session.add(operation)
-            id_ += 1
+            idx += 1
 
         session.commit()
         st.write(f"{len(df_input.index)} operations added.")
@@ -82,9 +78,10 @@ df = orm.get_df(
     types=types,
     sort_by_date=True,
     dates=dates,
+    category_names=category_names,
 )
 
 st.write(f"{len(df.index)} operations:")
-columns = ["amount", "account", "label", "category"]
+columns = ["amount", "account", "label", "category_name"]
 
 st.dataframe(df[columns])

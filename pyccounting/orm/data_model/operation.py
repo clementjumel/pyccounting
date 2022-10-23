@@ -22,10 +22,12 @@ class Operation(Base):
         attrs: list[str] = [str(getattr(self, attr)) for attr in attr_names]
         return ", ".join(attrs)
 
-    def find_category_name(self, category_rules: list[CategoryRule]) -> str:
+    def find_category_name(self, category_rules: list[CategoryRule]) -> None:
         target_tokens = [token.upper() for token in self.label.strip().split()]
         for category_rule in category_rules:
             if category_rule.match(target_tokens=target_tokens):
-                return category_rule.category_name
+                self.category_name = category_rule.category_name
+                return
 
-        return "unknown"
+        self.category_name = "unknown"
+        return
