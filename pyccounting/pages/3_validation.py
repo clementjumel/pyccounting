@@ -1,7 +1,9 @@
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, widgets
+from pyccounting import db, initialize, widgets
+
+initialize.initialize()
 
 anonymous_mode: bool = widgets.anonymous_mode()
 widgets.reset()
