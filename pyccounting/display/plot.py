@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
-from pyccounting import db
+from pyccounting import orm
 
 COLORS = [
     "#1f77b4",
@@ -70,9 +70,9 @@ def plot(
     for i, account in enumerate(accounts):
         color = COLORS[i]
         if account != "total":
-            start_amount = db.get_start_amount(accounts=[account], date=dates[0])
+            start_amount = orm.get_start_amount(accounts=[account], date=dates[0])
         else:
-            start_amount = db.get_start_amount(
+            start_amount = orm.get_start_amount(
                 accounts=[account for account in accounts if account != "total"],
                 date=dates[0],
             )

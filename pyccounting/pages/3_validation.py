@@ -1,7 +1,7 @@
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, widgets
+from pyccounting import db, initialize, orm, widgets
 
 initialize.initialize()
 
@@ -10,13 +10,13 @@ widgets.reset()
 
 st.write("### Validation")
 
-df = db.get_df(validated_status=False)
+df = orm.get_df(validated_status=False)
 
 if df.empty:
     st.write("There's no operation needing validation! 😊")
 
 else:
-    df = db.get_df(validated_status=False)
+    df = orm.get_df(validated_status=False)
     st.write(f"{len(df.index)} operations need a validation:")
     columns = ["account", "label", "category"]
     if not anonymous_mode:

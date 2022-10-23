@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, widgets
+from pyccounting import db, initialize, orm, widgets
 
 initialize.initialize()
 
@@ -35,7 +35,7 @@ if uploaded_file is not None:
 
     st.dataframe(df_input)
 
-    df = db.get_df(accounts=[account], sort_by_date=True)
+    df = orm.get_df(accounts=[account], sort_by_date=True)
     id_: int = 1 if df.empty else df.iloc[-1]["id_"] + 1
 
     with Session(db.engine) as session:
@@ -79,7 +79,7 @@ if uploaded_file is not None:
 
 st.write("### All operations")
 
-df = db.get_df(
+df = orm.get_df(
     accounts=accounts,
     types=types,
     sort_by_date=True,
