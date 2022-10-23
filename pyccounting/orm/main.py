@@ -4,7 +4,8 @@ import json
 import pandas as pd
 
 from pyccounting import _ROOT
-from pyccounting.db import engine
+
+from .db import engine
 
 
 def get_df(
