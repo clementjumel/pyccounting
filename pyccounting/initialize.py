@@ -9,26 +9,23 @@ from pyccounting import _ROOT, orm
 
 def initialize() -> None:
     os.makedirs(_ROOT / "data" / "db", exist_ok=True)
-    if not Path.exists(_ROOT / "data" / "db" / "sqlite.db"):
-        with Session(orm.engine) as session:
-            orm.Base.metadata.create_all(bind=session.bind)
+    if Path.exists(_ROOT / "data" / "db" / "sqlite.db"):
+        return
 
-        with open(_ROOT / "data" / "categories.json", "r") as file:
-            category_names: list[str] = json.load(file)
-        categories: list[orm.Category] = [
-            orm.Category(name=category_name, idx=idx)
-            for idx, category_name in enumerate(category_names)
-        ]
+    with Session(orm.engine) as session:
+        orm.Base.metadata.create_all(bind=session.bind)
 
-        with open(_ROOT / "data" / "rules.json", "r") as file:
-            rules: dict[str, list[str]] = json.load(file)
-        category_rules: list[orm.CategoryRule] = [
-            orm.CategoryRule(category_name=category_name, rule=rule, idx=idx)
-            for category_name, rules_ in rules.items()
-            for idx, rule in enumerate(rules_)
-        ]
+    with open(_ROOT / "data" / "categories.json", "r") as file:
+        category_names: list[str] = json.load(file)
+    with open(_ROOT / "data" / "rules.json", "r") as file:
+        category_rule_contents: dict[str, list[str]] = json.load(file)
 
-        with Session(orm.engine) as session:
-            session.add_all(categories)
-            session.add_all(category_rules)
-            session.commit()
+    with Session(orm.engine) as session:
+        for idx1, category_name in enumerate(category_names):
+            category: orm.Category = orm.Category(name=category_name, idx=idx1)
+            if category_name in category_rule_contents:
+                rule_contents: list[str] = category_rule_contents[category_name]
+                for idx2, content in enumerate(rule_contents):
+                    category.rules.append(orm.Rule(content=content, idx=idx2))
+                session.add(category)
+        session.commit()

@@ -7,7 +7,7 @@ from pyccounting import orm
 
 def dates_widget() -> tuple[datetime.date, datetime.date]:
     with st.sidebar:
-        df = orm.get_df(sort_by_date=True)
+        df = orm.get_operation_df(date_index=True, sort_by_date=True)
         if not df.empty:
             value = (min(df.index), max(df.index))
         else:

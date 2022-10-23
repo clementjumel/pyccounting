@@ -1,12 +1,9 @@
 import streamlit as st
 
-from pyccounting import orm
-
 
 def accounts_widget(extended: bool = False) -> list[str]:
     with st.sidebar:
-        df = orm.get_df()
-        options = sorted(set(df["account"].values))
+        options = ["bnp", "fortuneo"]
         if extended:
             options.append("total")
 

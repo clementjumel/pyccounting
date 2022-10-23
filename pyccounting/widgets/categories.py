@@ -5,9 +5,7 @@ from pyccounting import orm
 
 def categories_widget() -> list[str]:
     with st.sidebar:
-        df = orm.get_df()
-        options = sorted(set(df["category_name"].values))
-
+        options: list[str] = orm.get_category_names()
         category_names: list[str] = st.multiselect(
             label="Select your categories:",
             options=options,
