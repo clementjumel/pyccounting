@@ -3,7 +3,9 @@ import datetime
 import pandas as pd
 import streamlit as st
 
-from pyccounting import db, display, widgets
+from pyccounting import db, display, initialize, widgets
+
+initialize.initialize()
 
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts(extended=True)

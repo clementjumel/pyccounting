@@ -5,7 +5,9 @@ import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, widgets
+from pyccounting import db, initialize, widgets
+
+initialize.initialize()
 
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts()

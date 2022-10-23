@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import datetime
 import json
-import os
 
 import pandas as pd
 import streamlit as st
 from sqlalchemy import Boolean, Column, Date, Float, Integer, String, create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy.orm import declarative_base
 
 engine: Engine = create_engine(url="sqlite:///data/db/sqlite.db")
 
@@ -75,11 +74,6 @@ class CategoryRule(Base):  # type: ignore
 
     category = Column(String, primary_key=True, index=True)
     content = Column(String, primary_key=True, index=True)
-
-
-os.makedirs("data/db/", exist_ok=True)
-with Session(engine) as session:
-    Base.metadata.create_all(bind=session.bind)
 
 
 def get_df(
