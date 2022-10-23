@@ -10,12 +10,14 @@ initialize.initialize()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts(extended=True)
 types: list[str] = widgets.types(extended=True)
+category_names: list[str] = widgets.categories()
 
 df: pd.DataFrame = orm.get_df(
     accounts=accounts,
     types=types,
     sort_by_date=True,
     dates=dates,
+    category_names=category_names,
 )
 
 if df.empty:

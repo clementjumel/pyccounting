@@ -18,7 +18,7 @@ class Operation(Base):
     category_name: str = Column(String, ForeignKey("category.name"))
 
     def __str__(self) -> str:
-        attr_names: list[str] = ["amount", "date", "label", "account", "category"]
+        attr_names: list[str] = ["amount", "date", "label", "account", "category_name"]
         attrs: list[str] = [str(getattr(self, attr)) for attr in attr_names]
         return ", ".join(attrs)
 

@@ -11,7 +11,7 @@ from .db import engine
 def get_df(
     accounts: list[str] | None = None,
     types: list[str] | None = None,
-    categories: list[str] | None = None,
+    category_names: list[str] | None = None,
     date_index: bool = True,
     sort_by_date: bool = False,
     dates: tuple[datetime.date, datetime.date] | None = None,
@@ -30,8 +30,8 @@ def get_df(
         elif not types:
             df = df.loc[[False for _ in df.index]]
 
-    if categories is not None:
-        df = df.loc[df["category"].isin(categories)]
+    if category_names is not None:
+        df = df.loc[df["category_name"].isin(category_names)]
 
     if validated_status is not None:
         df = df.loc[df["validated"] == validated_status]
