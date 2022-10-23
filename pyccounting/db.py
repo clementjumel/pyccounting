@@ -6,13 +6,11 @@ import os
 
 import pandas as pd
 import streamlit as st
-from dotenv import load_dotenv
 from sqlalchemy import Boolean, Column, Date, Float, Integer, String, create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, declarative_base
 
-load_dotenv()
-engine: Engine = create_engine(url=f"sqlite:///data/db/{os.getenv('DB_NAME')}")
+engine: Engine = create_engine(url="sqlite:///data/db/sqlite.db")
 
 Base = declarative_base()
 
