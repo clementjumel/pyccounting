@@ -10,8 +10,6 @@ initialize.initialize()
 dates: tuple[datetime.date, datetime.date] = widgets.dates()
 accounts: list[str] = widgets.accounts(extended=True)
 types: list[str] = widgets.types(extended=True)
-anonymous_mode: bool = widgets.anonymous_mode()
-widgets.reset()
 
 df: pd.DataFrame = orm.get_df(
     accounts=accounts,
@@ -29,7 +27,7 @@ else:
         dates=dates,
         accounts=accounts,
         types=types,
-        anonymous_mode=anonymous_mode,
+        anonymous_mode=False,
     )
     st.write("---")
 
@@ -41,5 +39,5 @@ else:
         dates=dates,
         accounts=accounts,
         types=types,
-        anonymous_mode=anonymous_mode,
+        anonymous_mode=False,
     )

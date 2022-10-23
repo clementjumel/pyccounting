@@ -1,12 +1,9 @@
 import streamlit as st
 from sqlalchemy.orm import Session
 
-from pyccounting import db, initialize, orm, widgets
+from pyccounting import db, initialize, orm
 
 initialize.initialize()
-
-anonymous_mode: bool = widgets.anonymous_mode()
-widgets.reset()
 
 st.write("### Validation")
 
@@ -18,9 +15,7 @@ if df.empty:
 else:
     df = orm.get_df(validated_status=False)
     st.write(f"{len(df.index)} operations need a validation:")
-    columns = ["account", "label", "category"]
-    if not anonymous_mode:
-        columns = ["amount"] + columns
+    columns = ["amount", "account", "label", "category"]
     st.dataframe(df[columns])
 
     st.write("---")
@@ -38,7 +33,7 @@ else:
         checks: dict[int, bool] = {}
         for id_, operation in operations_dict.items():
             checks[id_] = st.checkbox(
-                label=operation.to_string(anonymous_mode=anonymous_mode),
+                label=operation.to_string(anonymous_mode=False),
                 value=False,
                 key=f"validation_{id_}",
             )
@@ -49,7 +44,7 @@ else:
                     if checks[id_]:
                         query = session.query(db.Operation).filter(db.Operation.id_ == id_)
                         operation = query.one()
-                        operation.set_validated(anonymous_mode=anonymous_mode)
+                        operation.set_validated(anonymous_mode=False)
 
                 session.commit()
 

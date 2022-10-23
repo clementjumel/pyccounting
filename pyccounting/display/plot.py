@@ -103,7 +103,7 @@ def plot(
             _plot_line(
                 ax=ax,
                 df=df_,
-                anonymous_mode=anonymous_mode,
+                anonymous_mode=False,
                 dates=dates,
                 start_amount=start_amount,
                 annotate=annotate,
