@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from pyccounting.orm.data_model import Base
 
-engine: Engine = create_engine(url="sqlite:///data/db/sqlite.db")
+engine: Engine = create_engine(url="sqlite:///data/databases/sqlite.db")
 
 
 def create_tables() -> None:
