@@ -3,25 +3,13 @@ import datetime
 import pandas as pd
 from sqlalchemy.orm import Session
 
-from pyccounting.orm.categories import get_category
-from pyccounting.orm.data_model import Category, Operation
+from pyccounting.orm.data_model import Operation
 from pyccounting.orm.database import engine
 
 
 def get_operations() -> list[Operation]:
     with Session(engine) as session:
         return session.query(Operation).order_by(Operation.idx).all()
-
-
-def get_category_operations(category_name: str) -> list[Operation]:
-    category: Category = get_category(category_name=category_name)
-    with Session(engine) as session:
-        return (
-            session.query(Operation)
-            .filter(Operation.category_id == category.id)
-            .order_by(Operation.idx)
-            .all()
-        )
 
 
 def get_operation_idx() -> int:
