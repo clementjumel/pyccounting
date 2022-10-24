@@ -23,11 +23,9 @@ uploaded_file: UploadedFile | None = st.file_uploader(
 if uploaded_file is not None:
 
     if account == "bnp":
-        sep: str = ","
-        df: pd.DataFrame = pd.read_csv(uploaded_file, sep=sep)
+        df: pd.DataFrame = pd.read_csv(uploaded_file, sep=",")
     elif account == "fortuneo":
-        sep = ";"
-        df = pd.read_csv(uploaded_file, sep=sep)
+        df = pd.read_csv(uploaded_file, sep=";")
         df = df.iloc[::-1]  # reverse the order of the DataFrame
     else:
         raise ValueError
@@ -43,5 +41,8 @@ df = orm.get_operation_df(
     dates=dates,
     category_names=category_names,
 )
-st.write(f"{len(df.index)} imported operations:")
-st.dataframe(df)
+if df.empty:
+    st.write("No operation imported, yet.")
+else:
+    st.write(f"{len(df.index)} operations imported:")
+    st.dataframe(df)

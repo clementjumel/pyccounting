@@ -40,7 +40,12 @@ class Operation(Base):
     @classmethod
     def from_row(cls, row: pd.Series, account: str, idx) -> Operation:
         if account == "bnp":
-            label = row["Libelle operation"]
+            label: str = row["Libelle operation"].strip()
+            if label[-24:-19] == "CARTE":
+                label = label[:-24]
+            if label.startswith("FACTURE CARTE DU"):
+                label = "CARTE" + label.removeprefix("FACTURE CARTE DU")
+            label = label.strip()
             date = datetime.datetime.strptime(row["Date operation"], "%d/%m/%Y").date()
             amount = float(row["Montant operation en euro"].replace(",", "."))
         elif account == "fortuneo":
