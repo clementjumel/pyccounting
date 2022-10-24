@@ -4,7 +4,8 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from pyccounting import _ROOT, orm
+from . import orm
+from ._path import _ROOT
 
 
 def initialize() -> None:

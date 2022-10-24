@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from pyccounting import _ROOT
+from pyccounting._path import _ROOT
 
 from .operations import get_operation_df
 
