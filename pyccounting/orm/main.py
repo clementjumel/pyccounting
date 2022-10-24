@@ -2,8 +2,7 @@ import datetime
 import json
 
 from pyccounting._path import _ROOT
-
-from .operations import get_operation_df
+from pyccounting.orm.operations import get_operation_df
 
 
 def get_start_amount(accounts: list[str], date: datetime.date) -> float:
