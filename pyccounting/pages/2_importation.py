@@ -30,7 +30,8 @@ if uploaded_file is not None:
     else:
         raise ValueError
     st.dataframe(df)
-    orm.add_operation_df(df=df, account=account, verbose=True)
+    orm.add_operations(df=df, account=account)
+    st.info(f"{len(df)} operations imported.")
 
 st.write("### Imported Operations")
 df = orm.get_operation_df(

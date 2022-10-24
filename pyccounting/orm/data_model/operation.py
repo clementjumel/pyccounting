@@ -38,7 +38,13 @@ class Operation(Base):
         )
 
     @classmethod
-    def from_row(cls, row: pd.Series, account: str, idx) -> Operation:
+    def from_row(
+        cls,
+        row: pd.Series,
+        account: str,
+        idx: int,
+        category_id: str,
+    ) -> Operation:
         if account == "bnp":
             label: str = row["Libelle operation"].strip()
             if label[-24:-19] == "CARTE":
@@ -66,19 +72,12 @@ class Operation(Base):
             label=label,
             date=date,
             amount=amount,
+            category_id=category_id,
         )
 
-    def find_category(
-        self,
-        rules: list[Rule],
-        default_category_id: str,
-    ) -> None:
+    def find_category(self, rules: list[Rule]) -> None:
         target_tokens = [token.upper() for token in self.label.strip().split()]
-
         for rule in rules:
             if rule.match(target_tokens=target_tokens):
                 self.category_id = rule.category_id
                 return
-
-        self.category_id = default_category_id
-        return

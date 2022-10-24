@@ -1,41 +1,34 @@
 import datetime
 
 import pandas as pd
-import streamlit as st
 from sqlalchemy.orm import Session
 
-from .categories import get_default_category_id
-from .data_model import Operation, Rule
-from .db import engine
-from .rules import get_rules
+from pyccounting.orm.categories import get_category
+from pyccounting.orm.data_model import Category, Operation
+from pyccounting.orm.database import engine
+
+
+def get_operations() -> list[Operation]:
+    with Session(engine) as session:
+        return session.query(Operation).order_by(Operation.idx).all()
+
+
+def get_category_operations(category_name: str) -> list[Operation]:
+    category: Category = get_category(category_name=category_name)
+    with Session(engine) as session:
+        return (
+            session.query(Operation)
+            .filter(Operation.category_id == category.id)
+            .order_by(Operation.idx)
+            .all()
+        )
 
 
 def get_operation_idx() -> int:
-    with Session(engine) as session:
-        operations: list[Operation] = session.query(Operation).order_by(Operation.idx).all()
-
+    operations: list[Operation] = get_operations()
     if operations:
         return operations[-1].idx + 1
     return 0
-
-
-def add_operation_df(df: pd.DataFrame, account: str, verbose: bool = False) -> None:
-    rules: list[Rule] = get_rules()
-    default_category_id: str = get_default_category_id()
-    idx: int = get_operation_idx()
-
-    with Session(engine) as session:
-        operations: list[Operation] = []
-        for _, row in df.iterrows():
-            operation = Operation.from_row(row=row, account=account, idx=idx)
-            operation.find_category(rules=rules, default_category_id=default_category_id)
-            operations.append(operation)
-            idx += 1
-        session.add_all(operations)
-        session.commit()
-
-    if verbose:
-        st.info(f"{len(operations)} operations added.")
 
 
 def get_operation_df(

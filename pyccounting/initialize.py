@@ -2,8 +2,6 @@ import json
 import os
 from pathlib import Path
 
-from sqlalchemy.orm import Session
-
 from . import orm
 from ._path import _ROOT
 
@@ -13,20 +11,13 @@ def initialize() -> None:
     if Path.exists(_ROOT / "data" / "db" / "sqlite.db"):
         return
 
-    with Session(orm.engine) as session:
-        orm.Base.metadata.create_all(bind=session.bind)
+    orm.create_tables()
 
     with open(_ROOT / "data" / "categories.json", "r") as file:
         category_names: list[str] = json.load(file)
+    orm.add_categories(category_names=category_names)
+
     with open(_ROOT / "data" / "rules.json", "r") as file:
         category_rule_contents: dict[str, list[str]] = json.load(file)
-
-    with Session(orm.engine) as session:
-        for idx1, category_name in enumerate(category_names):
-            category: orm.Category = orm.Category(name=category_name, idx=idx1)
-            if category_name in category_rule_contents:
-                rule_contents: list[str] = category_rule_contents[category_name]
-                for idx2, content in enumerate(rule_contents):
-                    category.rules.append(orm.Rule(content=content, idx=idx2))
-                session.add(category)
-        session.commit()
+    for category_name, rule_contents in category_rule_contents.items():
+        orm.add_rules(category_name=category_name, rule_contents=rule_contents)
