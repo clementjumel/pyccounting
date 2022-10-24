@@ -51,6 +51,9 @@ def get_operation_df(
         records: list[dict] = [operation.to_dict() for operation in operations]
         df: pd.DataFrame = pd.DataFrame.from_records(records)
 
+    if df.empty:
+        return df
+
     if accounts is not None:
         df = df.loc[df["account"].isin(accounts)]
 
