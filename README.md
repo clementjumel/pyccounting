@@ -5,5 +5,5 @@ Account Analysis Tools made with Python.
 To start the streamlit app, run:
 
 ```
-poetry run streamlit run pyccounting/app.py
+poetry run streamlit run pyccounting/homepage.py
 ```

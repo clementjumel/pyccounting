@@ -54,7 +54,7 @@ if uploaded_file is not None:
     n0: int = len(orm.get_category_operations(category_name="unknown"))
     orm.find_category()
     n1: int = len(orm.get_category_operations(category_name="unknown"))
-    st.info(f"{n0 - n1} operation's categories found.")
+    st.info(f"{n0 - n1} operation categories found.")
 
     with open(_ROOT / "data" / "reports" / uploaded_file.name, "wb") as file:
         file.write(uploaded_file.getbuffer())
