@@ -79,9 +79,8 @@ class Operation(Base):
         )
 
     def find_category(self, rules: list[Rule]) -> None:
-        target_tokens = [token.upper() for token in self.label.strip().split()]
         for rule in rules:
-            if rule.match(target_tokens=target_tokens):
+            if rule.match(target=self.label):
                 self.category_id = rule.category_id
                 self.rule_id = rule.id_
                 return

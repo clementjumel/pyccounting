@@ -47,8 +47,10 @@ with st.form(key="form_0"):
         key="selectbox_2",
     )
     content: str = st.text_input("Add a content")
+    mode: str = st.radio("Select a rule mode:", options=["string", "tokens"])
     if st.form_submit_button("Submit"):
-        orm.add_rules(category_name=category_name, rule_contents=[content])
+        rule_dict: dict[str, str] = dict(content=content, mode=mode)
+        orm.add_rules(category_name=category_name, rule_dicts=[rule_dict])
         st.info("Rule added.")
 
         n0: int = len(orm.get_category_operations(category_name="unknown"))
