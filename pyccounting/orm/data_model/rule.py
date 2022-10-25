@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
@@ -14,6 +15,7 @@ class Rule(Base):
     content: str = Column(String)
 
     category_id: str = Column(String, ForeignKey("category.id_"))
+    operations = relationship("Operation")
 
     def __str___(self) -> str:
         return f"{self.content} ({self.category})"

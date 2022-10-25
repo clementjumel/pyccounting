@@ -29,6 +29,16 @@ def get_category_operations(category_name: str) -> list[Operation]:
         )
 
 
+def get_rule_operations(rule_id: str) -> list[Operation]:
+    with Session(engine) as session:
+        return (
+            session.query(Operation)
+            .filter(Operation.rule_id == rule_id)
+            .order_by(Operation.idx)
+            .all()
+        )
+
+
 def get_operation_idx() -> int:
     operations: list[Operation] = get_operations()
     if operations:

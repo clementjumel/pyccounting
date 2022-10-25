@@ -23,19 +23,22 @@ class Operation(Base):
     amount: float = Column(Float)
 
     category_id: str = Column(String, ForeignKey("category.id_"))
+    rule_id: str = Column(String, ForeignKey("rule.id_"))
 
     def __str__(self) -> str:
         return f"{self.label} ({self.amount})"
 
-    def to_dict(self) -> dict:
-        return dict(
+    def to_dict(self, include_category: bool = True) -> dict:
+        d: dict = dict(
             idx=self.idx,
             account=self.account,
             label=self.label,
             date=self.date,
             amount=self.amount,
-            category_name=self.category.name,
         )
+        if include_category:
+            d["category_name"] = self.category.name
+        return d
 
     @classmethod
     def from_row(
@@ -80,4 +83,5 @@ class Operation(Base):
         for rule in rules:
             if rule.match(target_tokens=target_tokens):
                 self.category_id = rule.category_id
+                self.rule_id = rule.id_
                 return
