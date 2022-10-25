@@ -23,13 +23,12 @@ COLORS = [
 def _plot_line(
     ax: plt.Axes,
     df: pd.DataFrame,
-    dates: tuple[datetime.date, datetime.date],
+    start_date: datetime.date,
     start_amount: float,
     annotate: bool,
-    anonymous_mode: bool,
     kwargs: dict,
 ) -> None:
-    x: list[datetime.date] = [dates[0]]
+    x: list[datetime.date] = [start_date]
     y: list[float] = [start_amount]
 
     amount: float = start_amount
@@ -38,19 +37,19 @@ def _plot_line(
         x.append(date)
         y.append(amount)
 
-    x.append(dates[1])
+    x.append(datetime.date.today())
     y.append(y[-1])
 
-    if not anonymous_mode and annotate:
+    if annotate:
         ax.annotate(
             text=round(y[0], 2),
-            xy=(dates[0], y[0]),
+            xy=(start_date, y[0]),
             xytext=(-50, 0),
             textcoords="offset points",
         )
         ax.annotate(
             text=round(y[-1], 2),
-            xy=(dates[1], y[-1]),
+            xy=(datetime.date.today(), y[-1]),
             xytext=(5, 0),
             textcoords="offset points",
         )
@@ -60,22 +59,22 @@ def _plot_line(
 
 def plot(
     df: pd.DataFrame,
-    dates: tuple[datetime.date, datetime.date],
+    start_date: datetime.date,
     accounts: list[str],
     types: list[str],
-    anonymous_mode: bool,
 ) -> None:
     fig, ax = plt.subplots()
 
     for i, account in enumerate(accounts):
         color = COLORS[i]
-        if account != "total":
-            start_amount = orm.get_start_amount(accounts=[account], date=dates[0])
-        else:
-            start_amount = orm.get_start_amount(
-                accounts=[account for account in accounts if account != "total"],
-                date=dates[0],
-            )
+        start_amount = orm.get_start_amount(
+            accounts=(
+                [account]
+                if account != "total"
+                else [account_ for account_ in accounts if account_ != "total"]
+            ),
+            start_date=start_date,
+        )
 
         for type_ in types:
 
@@ -103,18 +102,18 @@ def plot(
             _plot_line(
                 ax=ax,
                 df=df_,
-                anonymous_mode=False,
-                dates=dates,
+                start_date=start_date,
                 start_amount=start_amount,
                 annotate=annotate,
                 kwargs=kwargs,
             )
 
-    if not anonymous_mode:
-        ax.axhline(y=0, color="k")
+    st.write("### Evolution")
+
+    ax.axhline(y=0, color="k")
     ax.grid(True, which="both")
     ax.set_yticklabels([])
-    plt.xlim(dates[0], dates[1])
+    plt.xlim(start_date, datetime.date.today())
     plt.yticks(range(-30000, 100001, 10000))
     plt.legend()
     st.pyplot(fig=fig)

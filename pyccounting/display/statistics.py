@@ -41,14 +41,13 @@ def _display_stats(stats: dict[str, dict[str, Any]], anonymous_mode: bool) -> No
 
 def statistics(
     df: pd.DataFrame,
-    dates: tuple[datetime.date, datetime.date],
+    start_date: datetime.date,
     accounts: list[str],
     types: list[str],
-    anonymous_mode: bool,
 ) -> None:
     st.write("### Statistics")
 
-    days = (dates[1] - dates[0]).days
+    days = (datetime.date.today() - start_date).days
     months = days / 31
     years = days / 365
 
