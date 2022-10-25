@@ -25,10 +25,7 @@ operation_df: pd.DataFrame = orm.get_operation_df(
 )
 
 st.title("Welcome in Pyccounting 😎")
-st.write(
-    f"There are **{len(orm.get_operations())} operations** in total, "
-    f"and **{len(operation_df)} operations** selected."
-)
+st.write(f"There are **{len(orm.get_operations())} operations** in total.")
 
 st.write("### Import Operations")
 
@@ -51,21 +48,24 @@ if uploaded_file is not None:
     orm.add_operations(df=report_df, account=account)
     st.info(f"{len(report_df)} operations imported.")
 
-    n0: int = len(orm.get_category_operations(category_name="unknown"))
+    n0: int = len(orm.get_category_operations())
     orm.find_category()
-    n1: int = len(orm.get_category_operations(category_name="unknown"))
+    n1: int = len(orm.get_category_operations())
     st.info(f"{n0 - n1} operation categories found.")
 
     with open(_ROOT / "data" / "reports" / uploaded_file.name, "wb") as file:
         file.write(uploaded_file.getbuffer())
-    st.info("Filed saved.")
+    st.info("Reports saved.")
 
+st.write("---")
 st.write("### Imported Operations")
 if not operation_df.empty:
+    st.write(f"There are **{len(operation_df)} operations** selected.")
     st.dataframe(operation_df)
 else:
     st.error("There's no operation selected.")
 
+st.write("---")
 st.write("### Reset Database")
 if st.button("Reset"):
     Path.unlink(_ROOT / "data" / "databases" / "sqlite.db")

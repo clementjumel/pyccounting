@@ -18,7 +18,7 @@ def get_operations(order_by_date: bool = False) -> list[Operation]:
         return query.all()
 
 
-def get_category_operations(category_name: str) -> list[Operation]:
+def get_category_operations(category_name: str = "unknown") -> list[Operation]:
     category: Category = get_category(category_name=category_name)
     with Session(engine) as session:
         return (
