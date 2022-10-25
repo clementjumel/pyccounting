@@ -30,4 +30,4 @@ def initialize_operations() -> None:
         n0: int = len(orm.get_category_operations(category_name="unknown"))
         orm.find_category()
         n1: int = len(orm.get_category_operations(category_name="unknown"))
-        st.info(f"{n0-n1} operation's categories found.")
+        st.info(f"{n0 - n1} operation categories found.")
