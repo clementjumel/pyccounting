@@ -14,23 +14,29 @@ st.write(f"There are currently **{len(orm.get_operations())} operations** import
 
 st.write("### Import Operations")
 
-account: str = st.radio("Select an account:", ("bnp", "fortuneo"))
 uploaded_file: UploadedFile | None = st.file_uploader(
     label="Upload a file:",
     type=["csv", "xls"],
 )
 if uploaded_file is not None:
 
-    if account == "bnp":
+    if "bnp" in uploaded_file.name:
+        account: str = "bnp"
         df: pd.DataFrame = pd.read_csv(uploaded_file, sep=",")
-    elif account == "fortuneo":
+    elif "fortuneo" in uploaded_file.name:
+        account = "fortuneo"
         df = pd.read_csv(uploaded_file, sep=";")
         df = df.iloc[::-1]  # reverse the order of the DataFrame
     else:
-        raise ValueError
+        raise ValueError("Couldn't infer account from file name.")
+
     orm.add_operations(df=df, account=account)
-    orm.find_category()
     st.info(f"{len(df)} operations imported.")
+
+    n0: int = len(orm.get_category_operations(category_name="unknown"))
+    orm.find_category()
+    n1: int = len(orm.get_category_operations(category_name="unknown"))
+    st.info(f"{n0 - n1} operation's categories found.")
 
     with open(_ROOT / "data" / "reports" / uploaded_file.name, "wb") as file:
         file.write(uploaded_file.getbuffer())
@@ -44,5 +50,5 @@ if not df.empty:
     st.write("### Reboot Operations")
     if st.button("Reboot"):
         Path.unlink(_ROOT / "data" / "databases" / "sqlite.db")
-        st.info("Database re-booted")
+        st.info("Database re-booted.")
         initialize.initialize()
