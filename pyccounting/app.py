@@ -1,16 +1,22 @@
+import datetime
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from pyccounting import initialize, orm
+from pyccounting import initialize, orm, widgets
 from pyccounting._path import _ROOT
 
 initialize.initialize()
 
+start_date: datetime.date = widgets.start_date()
+accounts: list[str] = widgets.accounts()
+types: list[str] = widgets.types()
+category_names: list[str] = widgets.categories()
+
 st.title("Welcome in Pyccounting 😎")
-st.write(f"There are currently **{len(orm.get_operations())} operations** imported.")
+st.write(f"There are currently **{len(orm.get_operations())} operations** imported in total.")
 
 st.write("### Import Operations")
 
@@ -42,10 +48,22 @@ if uploaded_file is not None:
         file.write(uploaded_file.getbuffer())
     st.info("Filed saved.")
 
-df = orm.get_operation_df(date_index=True, sort_by_date=True)
-if not df.empty:
+if orm.get_operations():
+
     st.write("### Imported Operations")
-    st.dataframe(df)
+    df = orm.get_operation_df(
+        start_date=start_date,
+        accounts=accounts,
+        types=types,
+        category_names=category_names,
+        date_index=True,
+        sort_by_date=True,
+    )
+    if not df.empty:
+        st.write(f"**{len(df)} operations** selected.")
+        st.dataframe(df)
+    else:
+        st.error("There's not operation selected.")
 
     st.write("### Reboot Operations")
     if st.button("Reboot"):

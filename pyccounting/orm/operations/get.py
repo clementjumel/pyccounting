@@ -1,16 +1,21 @@
 import datetime
 
 import pandas as pd
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Query, Session
 
 from pyccounting.orm.categories import get_category
 from pyccounting.orm.data_model import Category, Operation
 from pyccounting.orm.database import engine
 
 
-def get_operations() -> list[Operation]:
+def get_operations(order_by_date: bool = False) -> list[Operation]:
     with Session(engine) as session:
-        return session.query(Operation).order_by(Operation.idx).all()
+        query: Query = session.query(Operation)
+        if order_by_date:
+            query = query.order_by(Operation.date)
+        else:
+            query = query.order_by(Operation.idx)
+        return query.all()
 
 
 def get_category_operations(category_name: str) -> list[Operation]:
@@ -32,12 +37,13 @@ def get_operation_idx() -> int:
 
 
 def get_operation_df(
-    accounts: list[str] | None = None,
-    types: list[str] | None = None,
-    category_names: list[str] | None = None,
+    start_date: datetime.date = None,
+    end_date: datetime.date = None,
+    accounts: list[str] = None,
+    types: list[str] = None,
+    category_names: list[str] = None,
     date_index: bool = False,
     sort_by_date: bool = False,
-    dates: tuple[datetime.date, datetime.date] | None = None,
 ) -> pd.DataFrame:
     with Session(engine) as session:
         operations: list[Operation] = session.query(Operation).order_by(Operation.idx).all()
@@ -46,6 +52,12 @@ def get_operation_df(
 
     if df.empty:
         return df
+
+    if start_date is not None:
+        df = df.loc[df["date"] >= start_date]
+
+    if end_date is not None:
+        df = df.loc[df["date"] <= end_date]
 
     if accounts is not None:
         df = df.loc[df["account"].isin(accounts)]
@@ -68,8 +80,5 @@ def get_operation_df(
 
     if sort_by_date:
         df = df.sort_values(by="date")
-
-    if dates is not None:
-        df = df.loc[dates[0] : dates[1]]  # type: ignore
 
     return df
