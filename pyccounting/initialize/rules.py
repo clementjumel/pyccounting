@@ -15,8 +15,9 @@ def initialize_rules() -> None:
         return
 
     with open(_ROOT / "data" / "rules.json", "r") as file:
-        category_rule_contents: dict[str, list[str]] = json.load(file)
-    for category_name, rule_contents in category_rule_contents.items():
-        orm.add_rules(category_name=category_name, rule_contents=rule_contents)
-    n: int = sum(len(rule_contents) for _, rule_contents in category_rule_contents.items())
+        categories_rule_dicts: dict[str, list[dict[str, str]]] = json.load(file)
+
+    for category_name, rule_dicts in categories_rule_dicts.items():
+        orm.add_rules(category_name=category_name, rule_dicts=rule_dicts)
+    n: int = sum(len(rule_dicts) for _, rule_dicts in categories_rule_dicts.items())
     st.info(f"{n} rules initialized.")

@@ -66,8 +66,8 @@ if not operation_df.empty:
 else:
     st.error("There's no operation selected.")
 
-st.write("### Reboot Operations")
-if st.button("Reboot"):
+st.write("### Reset Database")
+if st.button("Reset"):
     Path.unlink(_ROOT / "data" / "databases" / "sqlite.db")
-    st.info("Database re-booted.")
+    st.info("Database reset.")
     initialize.initialize()

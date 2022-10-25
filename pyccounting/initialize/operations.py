@@ -8,7 +8,7 @@ from pyccounting._path import _ROOT
 
 
 def initialize_operations() -> None:
-    os.makedirs(_ROOT / "data" / "databases" / "reports", exist_ok=True)
+    os.makedirs(_ROOT / "data" / "reports", exist_ok=True)
     if orm.get_operations():
         return
 

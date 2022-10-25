@@ -13,6 +13,7 @@ class Rule(Base):
 
     idx: int = Column(Integer)
     content: str = Column(String)
+    mode: str = Column(String)
 
     category_id: str = Column(String, ForeignKey("category.id_"))
     operations = relationship("Operation")
@@ -27,14 +28,23 @@ class Rule(Base):
             categor_namey=self.category.name,
         )
 
-    def match(self, target_tokens: list[str]) -> bool:
-        content_tokens = [token.upper() for token in self.content.strip().split()]
-        if len(content_tokens) == 1 and content_tokens[0] in target_tokens:
-            return True
+    def match(self, target: str) -> bool:
+        content: str = self.content
 
-        target: str = " ".join(target_tokens)
-        content: str = " ".join(content_tokens)
-        if len(content_tokens) > 1 and content in target:
-            return True
+        target = target.strip().lower()
+        content = content.strip().lower()
+
+        if self.mode == "tokens":
+            target_tokens: set[str] = set(target.split())
+            content_tokens: set[str] = set(content.split())
+            if content_tokens.issubset(target_tokens):
+                return True
+
+        elif self.mode == "string":
+            if content in target:
+                return True
+
+        else:
+            raise ValueError
 
         return False
