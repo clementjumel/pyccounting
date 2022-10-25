@@ -32,6 +32,10 @@ if uploaded_file is not None:
     orm.find_category()
     st.info(f"{len(df)} operations imported.")
 
+    with open(_ROOT / "data" / "reports" / uploaded_file.name, "wb") as file:
+        file.write(uploaded_file.getbuffer())
+    st.info("Filed saved.")
+
 df = orm.get_operation_df(date_index=True, sort_by_date=True)
 if not df.empty:
     st.write("### Imported Operations")
