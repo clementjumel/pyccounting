@@ -7,39 +7,47 @@ from pyccounting import display, initialize, orm, widgets
 
 initialize.initialize()
 
-dates: tuple[datetime.date, datetime.date] = widgets.dates()
+start_date: datetime.date = widgets.start_date()
 accounts: list[str] = widgets.accounts(extended=True)
 types: list[str] = widgets.types(extended=True)
 category_names: list[str] = widgets.categories()
 
-df: pd.DataFrame = orm.get_df(
+operation_df: pd.DataFrame = orm.get_operation_df(
+    start_date=start_date,
     accounts=accounts,
     types=types,
-    sort_by_date=True,
-    dates=dates,
     category_names=category_names,
+    date_index=True,
+    sort_by_date=True,
 )
 
-if df.empty:
-    st.write("There's nothing to see here! 😇")
+st.title("Welcome in Pyccounting 😎")
+st.write(
+    f"There are **{len(orm.get_operations())} operations** in total, "
+    f"and **{len(operation_df)} operations** selected."
+)
+
+if operation_df.empty:
+    st.error("There's no operation selected.")
 
 else:
     display.plot(
-        df=df,
-        dates=dates,
+        df=operation_df,
+        start_date=start_date,
         accounts=accounts,
         types=types,
-        anonymous_mode=False,
     )
     st.write("---")
 
-    display.pie_chart(df=df, types=types)
+    display.pie_chart(
+        df=operation_df,
+        types=types,
+    )
     st.write("---")
 
     display.statistics(
-        df=df,
-        dates=dates,
+        df=operation_df,
+        start_date=start_date,
         accounts=accounts,
         types=types,
-        anonymous_mode=False,
     )

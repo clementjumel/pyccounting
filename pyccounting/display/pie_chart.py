@@ -33,7 +33,10 @@ def _plot_pie(df: pd.DataFrame) -> None:
     st.pyplot(fig=fig)
 
 
-def pie_chart(df: pd.DataFrame, types: list[str]) -> None:
+def pie_chart(
+    df: pd.DataFrame,
+    types: list[str],
+) -> None:
     for type_ in [type_ for type_ in types if type_ != "expenses & incomes"]:
         st.write(f"### {type_.capitalize()}")
         if type_ == "expenses":
