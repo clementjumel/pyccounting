@@ -4,7 +4,7 @@ from pyccounting.orm.data_model import Category
 from pyccounting.orm.database import engine
 
 
-def get_category(category_name: str) -> Category:
+def get_category(category_name: str = "unknown") -> Category:
     with Session(engine) as session:
         return session.query(Category).filter(Category.name == category_name).one()
 
