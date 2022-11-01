@@ -1,28 +1,14 @@
-import datetime
+import os
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from pyccounting import initialize, orm, widgets
+from pyccounting import initialize, orm
 from pyccounting._path import _ROOT
 
 initialize.initialize()
-
-start_date: datetime.date = widgets.start_date()
-accounts: list[str] = widgets.accounts()
-types: list[str] = widgets.types()
-category_names: list[str] = widgets.categories()
-
-operation_df: pd.DataFrame = orm.get_operation_df(
-    start_date=start_date,
-    accounts=accounts,
-    types=types,
-    category_names=category_names,
-    date_index=True,
-    sort_by_date=True,
-)
 
 st.title("Welcome in Pyccounting 😎")
 st.write(f"There are **{len(orm.get_operations())} operations** in total.")
@@ -37,7 +23,7 @@ if uploaded_file is not None:
 
     if "bnp" in uploaded_file.name:
         account: str = "bnp"
-        report_df: pd.DataFrame = pd.read_csv(uploaded_file, sep=",")
+        report_df: pd.DataFrame = pd.read_csv(uploaded_file, sep=";")
     elif "fortuneo" in uploaded_file.name:
         account = "fortuneo"
         report_df = pd.read_csv(uploaded_file, sep=";")
@@ -53,17 +39,33 @@ if uploaded_file is not None:
     n1: int = len(orm.get_category_operations())
     st.info(f"{n0 - n1} operation categories found.")
 
-    with open(_ROOT / "data" / "reports" / uploaded_file.name, "wb") as file:
+    file_names: list[str] = os.listdir(_ROOT / "data" / "reports")
+    idx: int = 1
+    while [file_name for file_name in file_names if file_name.startswith(f"{idx}_")]:
+        idx += 1
+    new_file_name: str = f"{idx}_{uploaded_file.name}"
+    with open(_ROOT / "data" / "reports" / new_file_name, "wb") as file:
         file.write(uploaded_file.getbuffer())
-    st.info("Reports saved.")
+    st.info(f"Reports saved as `{new_file_name}`.")
 
 st.write("---")
 st.write("### Imported Operations")
-if not operation_df.empty:
-    st.write(f"There are **{len(operation_df)} operations** selected.")
-    st.dataframe(operation_df)
+file_names = os.listdir(_ROOT / "data" / "reports")
+if not file_names:
+    st.error("No operation file imported.")
 else:
-    st.error("There's no operation selected.")
+    for file_name in sorted(file_names, key=lambda file_name: int(file_name.split("_")[0])):
+        with open(_ROOT / "data" / "reports" / file_name, "rb") as file:
+            if "bnp" in file_name:
+                df: pd.DataFrame = pd.read_csv(file, sep=";")
+            elif "fortuneo" in file_name:
+                df = pd.read_csv(file, sep=";")
+                df = df.iloc[::-1]  # reverse the order of the DataFrame
+            else:
+                raise ValueError("Couldn't infer account from file name.")
+
+        with st.expander(label=file_name, expanded=False):
+            st.dataframe(df)
 
 st.write("---")
 st.write("### Reset Database")
