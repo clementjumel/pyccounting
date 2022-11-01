@@ -1,6 +1,5 @@
 import datetime
 
-import orm
 import streamlit as st
 
 
@@ -19,13 +18,11 @@ def start_date_widget() -> datetime.date:
         st.write("---")
 
         if time_span == "ever":
-            operations: list[orm.Operation] = orm.get_operations(order_by_date=True)
-            return operations[0].date
-
-        if time_span == "last year":
-            delta: datetime.timedelta = datetime.timedelta(days=365)
+            delta: datetime.timedelta = datetime.timedelta(days=365 * 3)
+        elif time_span == "last year":
+            delta = datetime.timedelta(days=365)
         elif time_span == "last 6 months":
-            delta = datetime.timedelta(days=180)
+            delta = datetime.timedelta(days=182)
         elif time_span == "last 3 months":
             delta = datetime.timedelta(days=90)
         elif time_span == "last month":
