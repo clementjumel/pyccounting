@@ -23,16 +23,14 @@ if uploaded_file is not None:
 
     if "bnp" in uploaded_file.name:
         account: str = "bnp"
-        report_df: pd.DataFrame = pd.read_csv(uploaded_file, sep=";")
     elif "fortuneo" in uploaded_file.name:
         account = "fortuneo"
-        report_df = pd.read_csv(uploaded_file, sep=";")
-        report_df = report_df.iloc[::-1]  # reverse the order of the DataFrame
     else:
         raise ValueError("Couldn't infer account from file name.")
+    df: pd.DataFrame = pd.read_csv(uploaded_file, sep=";")
 
-    orm.add_operations(df=report_df, account=account)
-    st.info(f"{len(report_df)} operations imported.")
+    orm.add_operations(df=df, account=account)
+    st.info(f"{len(df)} operations imported.")
 
     n0: int = len(orm.get_category_operations())
     orm.find_category()
@@ -56,14 +54,7 @@ if not file_names:
 else:
     for file_name in sorted(file_names, key=lambda file_name: int(file_name.split("_")[0])):
         with open(_ROOT / "data" / "reports" / file_name, "rb") as file:
-            if "bnp" in file_name:
-                df: pd.DataFrame = pd.read_csv(file, sep=";")
-            elif "fortuneo" in file_name:
-                df = pd.read_csv(file, sep=";")
-                df = df.iloc[::-1]  # reverse the order of the DataFrame
-            else:
-                raise ValueError("Couldn't infer account from file name.")
-
+            df = pd.read_csv(file, sep=";")
         with st.expander(label=file_name, expanded=False):
             st.dataframe(df)
 
