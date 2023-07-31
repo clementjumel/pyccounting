@@ -1,13 +1,11 @@
 # This file defines all the hooks run by pre-commit.
 
-# By default, we exclude from all the hooks the models' directory, which might contain large files
-# managed with git-lfs, and the .ipynb files, which are Jupyter notebooks.
 exclude: "poetry.lock"
 
 repos:
   # Base pre-commit hook repository, for simple checks & fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.4.0
     hooks:
       - id: check-added-large-files # Prevent giant files from being committed
       - id: check-ast # Check whether the files parse as valid Python
@@ -18,51 +16,51 @@ repos:
       - id: debug-statements # Check for debugger imports and `breakpoint()` calls in python
       - id: detect-private-key # Detect the presence of private keys
       - id: end-of-file-fixer # Ensures that files end with a newline
-      - id: name-tests-test # Verify that test files are named correctly
 
   # Black is used to format the code in Python
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 23.7.0
     hooks:
       - id: black
+        args: ["--config", "pyproject.toml"]
 
   # Isort is used to re-organize our import statements in Python
   - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
 
+  # Prettier is a formatting tool for many non-Python files
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0
+    hooks:
+      - id: prettier
+
+  # TOML-sort is used to re-organize alphabetically TOML files (such as pyproject.toml)
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.1
+    hooks:
+      - id: toml-sort
+        args: ["--all", "--in-place"]
+
   # Flake8 is used to perform various code sanity checks in Python
-  - repo: https://gitlab.com/PyCQA/flake8
-    rev: 4.0.1
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
     hooks:
       - id: flake8
 
   # Mypy is used to check the typing hints in Python; it is quite a restrictive tool, so we don't
   # use it in tests
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.942
+    rev: v1.4.1
     hooks:
       - id: mypy
-        exclude: tests/
 
   # Bandit is used to check for potential security issues or vulnerabilities in Python; it's also
   # not used in tests as it prevents the use of `assert`
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.4
+    rev: 1.7.5
     hooks:
       - id: bandit
-        exclude: tests/
-
-  # Prettier is a formatting tool for many non-Python files
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.6.1
-    hooks:
-      - id: prettier
-
-  # TOML-sort is used to re-organize alphabetically TOML files (such as pyproject.toml)
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.20.0
-    hooks:
-      - id: toml-sort
-        args: ["--all", "--in-place"]
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]

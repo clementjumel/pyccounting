@@ -2,6 +2,11 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
 
+[tool]
+
+[tool.bandit]
+skips = ["B311"]
+
 [tool.black]
 exclude = '''
 /(
@@ -19,7 +24,7 @@ exclude = '''
 '''
 include = '\.pyi?$'
 line-length = 100
-target-version = ['py36', 'py37', 'py38', 'py39']
+target-version = ['py310']
 
 [tool.isort]
 line_length = 100
@@ -27,7 +32,7 @@ profile = 'black'
 
 [tool.poetry]
 authors = ["clementjumel <clement.jumel@gmail.com>"]
-description = "Generic Python package template"
+description = ""
 name = "pyccounting"
 version = "0.1.0"
 
@@ -38,5 +43,3 @@ pandas = "^1.4.2"
 python = "~3.10"
 sqlalchemy = "^1.4.37"
 streamlit = "^1.10.0"
-
-[tool.poetry.dev-dependencies]
