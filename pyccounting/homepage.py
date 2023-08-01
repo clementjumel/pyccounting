@@ -20,7 +20,6 @@ uploaded_file: UploadedFile | None = st.file_uploader(
     type=["csv", "xls"],
 )
 if uploaded_file is not None:
-
     if "bnp" in uploaded_file.name:
         account: str = "bnp"
     elif "fortuneo" in uploaded_file.name:

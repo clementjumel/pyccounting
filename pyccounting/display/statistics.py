@@ -27,7 +27,6 @@ def _get_account_stats(
 def _display_stats(stats: dict[str, dict[str, Any]], anonymous_mode: bool) -> None:
     for key_1 in stats:
         for key_2 in stats[key_1]:
-
             if not anonymous_mode:
                 if isinstance(stats[key_1][key_2], float):
                     stats[key_1][key_2] = round(stats[key_1][key_2], 2)
@@ -66,7 +65,6 @@ def statistics(
         st.write(f"#### {type_.capitalize()}")
         stats = {}
         for account in accounts:
-
             df_ = df.loc[df["account"] == account] if account != "total" else df
             if type_ == "expenses":
                 df_ = -1 * df_.loc[df_["amount"] < 0]

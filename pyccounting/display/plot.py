@@ -77,7 +77,6 @@ def plot(
         )
 
         for type_ in types:
-
             df_ = df.loc[df["account"] == account] if account != "total" else df
             if type_ == "expenses":
                 df_ = df_.loc[df_["amount"] < 0]

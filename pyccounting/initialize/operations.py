@@ -13,7 +13,6 @@ def initialize_operations() -> None:
         return
 
     for report_path in (_ROOT / "data" / "reports").glob("*.csv"):
-
         if "bnp" in str(report_path):
             account: str = "bnp"
             df: pd.DataFrame = pd.read_csv(report_path, sep=",")

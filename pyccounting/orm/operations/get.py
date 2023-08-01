@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 import pandas as pd
 from sqlalchemy.orm import Query, Session
@@ -47,11 +48,11 @@ def get_operation_idx() -> int:
 
 
 def get_operation_df(
-    start_date: datetime.date = None,
-    end_date: datetime.date = None,
-    accounts: list[str] = None,
-    types: list[str] = None,
-    category_names: list[str] = None,
+    start_date: Optional[datetime.date] = None,
+    end_date: Optional[datetime.date] = None,
+    accounts: Optional[list[str]] = None,
+    types: Optional[list[str]] = None,
+    category_names: Optional[list[str]] = None,
     date_index: bool = False,
     sort_by_date: bool = False,
 ) -> pd.DataFrame:
