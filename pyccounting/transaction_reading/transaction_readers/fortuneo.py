@@ -1,14 +1,14 @@
-from streamlit.runtime.uploaded_file_manager import UploadedFile
+from pathlib import Path
 
 from ..transaction import Transaction
 from .abc import TransactionReader
 
 
 class FortuneoTransactionReader(TransactionReader):
-    def match_format(self, file: UploadedFile) -> bool:
+    def match_format(self, file_path: Path) -> bool:
         # todo
         return False
 
-    def read(self, file: UploadedFile) -> list[Transaction]:
+    def read(self, file_path: Path) -> list[Transaction]:
         # todo
         return []
