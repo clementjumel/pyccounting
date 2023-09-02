@@ -37,13 +37,13 @@ repos:
   # Mypy is used to check the typing hints in Python; it is quite a restrictive tool, so we don't
   # use it in tests
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.5.1
     hooks:
       - id: mypy
 
   # Prettier is a formatting tool for many non-Python files
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0
+    rev: v3.0.3
     hooks:
       - id: prettier
 
