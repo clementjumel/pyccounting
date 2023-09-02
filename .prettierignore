@@ -1,9 +1,36 @@
-### Custom .gitignore ###
+### Custom .prettierignore ###
 # Data stuff
 data/
+datasets/
+models/
 
 # Pycharm stuff
 .idea/
+
+# Mkdocs documenation, as it causes issues with mkdocstring syntax
+docs/
+
+### create-react-app's .gitignore template ###
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# production
+build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 ### GitHub's .gitignore Python template ###
 # Byte-compiled / optimized / DLL files
@@ -22,7 +49,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
