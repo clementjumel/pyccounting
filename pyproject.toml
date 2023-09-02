@@ -4,9 +4,6 @@ requires = ["poetry-core>=1.0.0"]
 
 [tool]
 
-[tool.bandit]
-skips = ["B311"]
-
 [tool.black]
 exclude = '''
 /(
@@ -26,10 +23,6 @@ include = '\.pyi?$'
 line-length = 100
 target-version = ['py311']
 
-[tool.isort]
-line_length = 100
-profile = 'black'
-
 [tool.poetry]
 authors = ["clementjumel <clement.jumel@gmail.com>"]
 description = ""
@@ -43,3 +36,19 @@ pandas = "^1.4.2"
 python = "~3.11"
 sqlalchemy = "^1.4.37"
 streamlit = "^1.10.0"
+
+[tool.ruff]
+extend-ignore = [
+  "S311" # Standard pseudo-random generators are not suitable for cryptographic purposes
+]
+extend-select = [
+  "I", # isort
+  "S" # flake8-bandit
+]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.extend-per-file-ignores]
+"__init__.py" = [
+  "F401" # {name} imported but unused
+]
